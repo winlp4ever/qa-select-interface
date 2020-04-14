@@ -1,0 +1,29 @@
+.qa-select {
+    position: relative;
+    width: 50%;
+    margin: auto;
+    box-sizing: border-box;
+    padding: 0.5em;
+    .question {
+        box-sizing: border-box;
+        padding: 0.3em 0.5em;
+        margin: 0.5em 0;
+        box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+        border-radius: 0.5em;
+        span {
+            display: inline-block;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+            padding: 0.2em 0.5em;
+            &.status {
+                font-weight: 600;
+                font-size: 0.7em;
+                border-radius: 0.5em;
+                background: #ffcdd2;
+                &.reviewed {
+                    background: #e8f5e9;
+                }
+            }
+        }
+    }
+}

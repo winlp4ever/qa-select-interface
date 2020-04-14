@@ -6,7 +6,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
 const http = require('http');
-
+const fetch = require('node-fetch');
 // set up server
 var app = express();
 //app.use(favicon(path.join(__dirname, 'imgs', 'favicon.ico')));
@@ -90,6 +90,31 @@ app.post('/post-questions', (req, res, next) => {
             console.log(err.stack);
         } else {
             res.json({questions: response.rows});
+        }
+    })
+})
+
+app.post('/post-answers', async (req, res) => {
+    let response = await fetch('http://15.236.84.229:8000/answer/', {
+        method: 'post',
+        body: JSON.stringify(req.body),
+        headers: {'Content-Type': 'application/json'}
+    })
+        .then(response => response.json())
+	    .then(json => {
+            console.log(json);
+            res.json(json);
+        });
+})
+
+app.post('/submit-answers', (req, res) => {
+    const text = 'insert into questionAnswers_demo (id, question, answers) values ($1, $2, $3) on conflict (id) do update set answers=excluded.answers;';
+    const values = [req.body.id, req.body.question, JSON.stringify(req.body.answers)];
+    client.query(text, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json({status: 'ok'});
         }
     })
 })

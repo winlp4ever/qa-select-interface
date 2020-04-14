@@ -8,21 +8,121 @@ import './_app.scss';
 
 // import 3rd party libs
 import $ from 'jquery';
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import Button from '@material-ui/core/Button';
+import EditRoundedIcon from '@material-ui/icons/EditRounded';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
+
+
+const Answer = (props) => {
+    const [editAns, setEditAns] = useState(false);
+    
+    const toggleEditAns = () => setEditAns(!editAns);
+
+    const handleChangeAns = (e) => {
+        props.save(props.aid, e.target.value);
+    }
+
+    return <div className='answer'>
+        <Button onClick={props.del}><HighlightOffRoundedIcon/></Button>
+        <div className='Lv'>
+            <span className='title'>Level:</span>
+            <span className='lv'>{props.answer.book_level}</span>
+        </div>
+        <div className='Ans'>
+            {
+                editAns? <TextareaAutosize
+                    className='ans'
+                    onChange={handleChangeAns}
+                    defaultValue={props.answer.answer}
+                    onBlur={toggleEditAns}
+                />: <div 
+                    className='ans' 
+                    onDoubleClick={toggleEditAns}
+                >
+                    {props.answer.answer}
+                </div>
+            }
+        </div>
+        
+    </div>
+}
 
 class Question extends Component {
-    state = {}
+    state = {
+        displayAnswers: false,
+        answers: []
+    }
 
     componentDidMount() {
 
+    }
+
+    toggleDisplayAns = async () => {
+        if (!this.state.displayAnswers) {
+            let response = await fetch('/post-answers', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question: this.props.question.question_text
+                })
+            });
+            let data = await response.json();
+            console.log(data);
+            this.setState({answers: data.answers_es});
+        }
+        this.setState({displayAnswers: !this.state.displayAnswers});
+    }
+
+    deleteAnswer = (id) => {
+        let as = this.state.answers.slice();
+        as.splice(id, 1);
+        this.setState({answers: as});
+    }
+
+    saveAnswerModifs = (id, a) => {
+        this.state.answers[id].answer = a;
+    }
+
+    saveToDb = async () => {
+        let response = await fetch('/submit-answers', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: this.props.question.id,
+                question: this.props.question.question_text,
+                answers: {answers: this.state.answers}
+            })
+        });
+        let data = await response.json();
+        console.log(data);
+        //props.saveQAs();
     }
 
     render() {
         /**
          * Rendering function
          */
+        let reviewed = this.props.question.question_teacher_manual_review;
         return <div className='question'>
-            <span>{this.props.question.question_text}</span>
-            <span>{this.props.question.question_teacher_manual_review? 'reviewed': 'not reviewed'}</span>
+            <div className='q'>
+                <span>{this.props.question.question_text}</span>
+                <Button className='modify-answers' onClick={this.toggleDisplayAns}><EditRoundedIcon/></Button>
+            </div>
+            {this.state.displayAnswers? <div className='as'>
+                {this.state.answers.map((a, id) => <Answer 
+                    answer={a} 
+                    key={id} 
+                    save={this.saveAnswerModifs} 
+                    aid={id}
+                    del={_ => this.deleteAnswer(id)}
+                />)}
+                <Button className='valid-modifs' onClick={this.saveToDb}>Save changes</Button>
+            </div>: null}
         </div>
     }
 }
@@ -45,7 +145,6 @@ export default class App extends Component {
             })
         });
         let data = await response.json();
-        console.log(data.questions)
         this.setState({questions: data.questions});
     }
 
