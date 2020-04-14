@@ -5,24 +5,145 @@
     box-sizing: border-box;
     padding: 0.5em;
     .question {
+        position: relative;
         box-sizing: border-box;
-        padding: 0.3em 0.5em;
-        margin: 0.5em 0;
+        margin: 1em 0;
         box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
         border-radius: 0.5em;
-        span {
-            display: inline-block;
-            overflow-wrap: break-word;
-            box-sizing: border-box;
-            padding: 0.2em 0.5em;
-            &.status {
-                font-weight: 600;
-                font-size: 0.7em;
-                border-radius: 0.5em;
-                background: #ffcdd2;
-                &.reviewed {
-                    background: #e8f5e9;
+        overflow: hidden;
+        background: #fafafa;
+        padding: 0.5em 1em;
+        &.show-answers {
+            .q {
+                border-bottom: 1px solid rgb(221, 221, 221);
+            }
+        }
+        .q {
+            position: relative;
+            
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            span {
+                display: inline-block;
+                overflow-wrap: break-word;
+                box-sizing: border-box;
+                padding: 0.2em 0.5em;
+                &.status {
+                    font-weight: 600;
+                    font-size: 0.7em;
+                    border-radius: 0.5em;
+                    background: #ffcdd2;
+                    &.reviewed {
+                        background: #e8f5e9;
+                    }
                 }
+                svg {
+                    //display: block;
+                    margin: auto;
+                    font-size: 1em;
+                    vertical-align: middle;
+                    color: #2e7d32;
+                }
+            }
+            .modify-answers {
+                position: absolute;
+                top: 0;
+                right: 0;
+                max-width: 100px;
+                padding: 0em;
+                min-width: 0;
+                width:2em;
+                height:2em;
+                border-radius: 1em;
+                margin-top: -0.5em;
+                margin-right: -1em;
+                svg {
+                    font-size: 1em;
+                    display: block;
+                    margin: auto;
+                    color: #90a4ae;
+                }
+            }
+        }
+        .as {
+            position: relative;
+            box-sizing: border-box;
+            padding: 0.5em;
+            .answer {
+                position: relative;
+                box-sizing: border-box;
+                padding: 0.5em;
+                transition: 0.25s all cubic-bezier(0, 0, 0.2, 1);
+                border-left: 2px solid transparent;
+                &:hover {
+                    border-left: 2px solid #2962ff;
+                }
+                span {
+                    display: inline-block;
+                    box-sizing: border-box;
+                    padding: 0.2em 0.5em;
+                    font-size: 0.9em;
+                }
+                .title {
+                    font-weight: 600;
+                }
+                .lv {
+                    border-radius: 0.5em;
+                    background: white;
+                    box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+                }
+                .del {
+                    position: absolute;
+                    top: 0;
+                    right: 0.5em;
+                    color: #cfd8dc;
+                    min-width: 0;
+                    padding: 0;
+                    display: inline-block;
+                    height: 2em;
+                    width: 2em;
+                    border-radius: 1em;
+                    svg {
+                        vertical-align: middle;
+                        margin: auto;
+                        font-size: 1.4em;
+                    }
+                }
+                .Ans {
+                    margin: 0.5em 0;
+                    div, textarea {
+                        resize: unset;
+                        display: block;
+                        box-sizing: border-box;
+                        font: {
+                            family: 'Baloo Chettan 2', sans-serif;
+                            size: 0.8em;
+                        }
+                        padding: 0.5em;
+                        width: 100%;
+                        outline: none;
+                        border: none;
+                        border-radius: 0.5em;
+                    }
+                    textarea {
+                        background: #f0f2f5;
+                    }
+                }
+            }
+            .valid-modifs {
+                text-transform: none;
+                letter-spacing: unset;
+                font: {
+                    family: 'Baloo Chettan 2', sans-serif;
+                }
+                display: block;
+                max-width: 200px;
+                margin: auto;
+                background: #2962ff;
+                color: whitesmoke;
+                font-weight: 600;
+                border-radius: 0.5em;
             }
         }
     }

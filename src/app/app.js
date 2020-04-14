@@ -12,7 +12,7 @@ import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import Button from '@material-ui/core/Button';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-
+import HelpTwoToneIcon from '@material-ui/icons/HelpTwoTone';
 
 const Answer = (props) => {
     const [editAns, setEditAns] = useState(false);
@@ -24,7 +24,12 @@ const Answer = (props) => {
     }
 
     return <div className='answer'>
-        <Button onClick={props.del}><HighlightOffRoundedIcon/></Button>
+        <Button 
+            className='del' 
+            onClick={props.del}
+        >
+            <HighlightOffRoundedIcon/>
+        </Button>
         <div className='Lv'>
             <span className='title'>Level:</span>
             <span className='lv'>{props.answer.book_level}</span>
@@ -34,13 +39,13 @@ const Answer = (props) => {
                 editAns? <TextareaAutosize
                     className='ans'
                     onChange={handleChangeAns}
-                    defaultValue={props.answer.answer}
+                    defaultValue={props.answer.snippet}
                     onBlur={toggleEditAns}
                 />: <div 
                     className='ans' 
                     onDoubleClick={toggleEditAns}
                 >
-                    {props.answer.answer}
+                    {props.answer.snippet}
                 </div>
             }
         </div>
@@ -108,8 +113,9 @@ class Question extends Component {
          * Rendering function
          */
         let reviewed = this.props.question.question_teacher_manual_review;
-        return <div className='question'>
+        return <div className={'question' + (this.state.displayAnswers? ' show-answers': '')}>
             <div className='q'>
+                <span className='help'><HelpTwoToneIcon/></span>
                 <span>{this.props.question.question_text}</span>
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}><EditRoundedIcon/></Button>
             </div>
