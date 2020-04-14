@@ -1,4 +1,3 @@
-//const webpackDevServer = require('webpack-dev-server');
 const webpack = require('webpack');
 const middleware = require('webpack-dev-middleware');
 const fs = require('fs');
@@ -8,15 +7,16 @@ const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
 const http = require('http');
 
-const utils = require('./utils');
-
 // set up server
 var app = express();
-app.use(favicon(path.join(__dirname, 'imgs', 'favicon.ico')));
+//app.use(favicon(path.join(__dirname, 'imgs', 'favicon.ico')));
 app.use(express.static(__dirname + './public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+/** 
+* webpack configs for prod and dev modes
+*/ 
 const prodConfig = require('./webpack.prod.js');
 const devConfig = require('./webpack.dev.js');
 const options = {};
@@ -46,9 +46,17 @@ app.use(
 );
 app.use(require('webpack-hot-middleware')(compiler));
 
-// setup backend data for servicese
-
-// websocket communication handlers
+/** 
+* setup postgres for backend data services
+*/
+const dbConfig = require('./db-credentials/config.js');
+const {Pool, Client} = require('pg');
+const pool = new Pool(dbConfig);
+const client = new Client(dbConfig);
+client.connect();
+/** 
+* websocket communication handlers
+*/
 io.on('connection', function(socket){
     count ++;
     console.log(`${count}th user connected with id: ${socket.id}`);
@@ -73,6 +81,18 @@ app.get('*', (req, res, next) => {
     });
 });
 
+app.post('/post-questions', (req, res, next) => {
+    const text = 'select * from question limit $1 offset $2';
+    const ranges = [20, 20 * req.body.range];
+
+    client.query(text, ranges, (err, response) => {
+        if (err) {
+            console.log(err.stack);
+        } else {
+            res.json({questions: response.rows});
+        }
+    })
+})
 
 // on terminating the process
 process.on('SIGINT', _ => {
@@ -86,4 +106,6 @@ process.on('SIGINT', _ => {
         console.log(path.join(postsPath, 'postinfo', name + '.json'));
     }
     process.exit();
+    client.end();
+    pool.end();
 })

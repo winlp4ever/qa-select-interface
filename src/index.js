@@ -30,7 +30,6 @@ if (module.hot) {
         [
             './app/app', 
         ], () => {
-            console.log('what merde');
             renderWeb();
         }
     );
