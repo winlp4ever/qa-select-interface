@@ -13,14 +13,31 @@ import Button from '@material-ui/core/Button';
 import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import HelpTwoToneIcon from '@material-ui/icons/HelpTwoTone';
+import BarChartRoundedIcon from '@material-ui/icons/BarChartRounded';
+import GamesRoundedIcon from '@material-ui/icons/GamesRounded';
+import TripOriginRoundedIcon from '@material-ui/icons/TripOriginRounded';
+import ThumbsUpDownRoundedIcon from '@material-ui/icons/ThumbsUpDownRounded';
+import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
+import FiberManualRecordOutlinedIcon from '@material-ui/icons/FiberManualRecordOutlined';
+import StarHalfRoundedIcon from '@material-ui/icons/StarHalfRounded';
+import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
+
+const Levels = ['Master1', 'Licence3', 'Master2'];
 
 const Answer = (props) => {
     const [editAns, setEditAns] = useState(false);
+    const [editLv, setEditLv] = useState(false);
     
+    const toggleEditLv = () => setEditLv(!editLv);
     const toggleEditAns = () => setEditAns(!editAns);
 
     const handleChangeAns = (e) => {
         props.save(props.aid, e.target.value);
+    }
+
+    const chooseLevel = (s) => {
+        props.modifyLv(props.aid, s);
+        toggleEditLv();
     }
 
     return <div className='answer'>
@@ -30,22 +47,35 @@ const Answer = (props) => {
         >
             <HighlightOffRoundedIcon/>
         </Button>
-        <div className='Lv'>
-            <span className='title'>Level:</span>
-            <span className='lv'>{props.answer.book_level}</span>
+        <div className='Supp Lv'>
+            <span className='title'><BarChartRoundedIcon/></span>
+            {editLv?<div className='levels'>
+                {Levels.map((l, id) => <span key={id} className='lv-choice'onClick={_ => chooseLevel(l)}>{l}</span>)}
+                <span onClick={toggleEditLv}><ClearRoundedIcon/></span>
+            </div> 
+            :<span className='lv' onClick={toggleEditLv}>{props.answer.answer_level}</span>}
         </div>
+        <div className='Supp Orientation'>
+            <span className='title'><GamesRoundedIcon/></span>
+            <span className='lv'>{props.answer.answer_orientation}</span>
+        </div>
+        {props.answer.source? <div className='Supp Origin'>
+            <span className='title'><TripOriginRoundedIcon/></span>
+            <span className='lv'>{props.answer.source}</span>
+        </div>: null}
         <div className='Ans'>
+            <span className='ttle'>Answer:</span>
             {
                 editAns? <TextareaAutosize
                     className='ans'
                     onChange={handleChangeAns}
-                    defaultValue={props.answer.snippet}
+                    defaultValue={props.answer.answer_text}
                     onBlur={toggleEditAns}
                 />: <div 
                     className='ans' 
                     onDoubleClick={toggleEditAns}
                 >
-                    {props.answer.snippet}
+                    {props.answer.answer_text}
                 </div>
             }
         </div>
@@ -56,13 +86,19 @@ const Answer = (props) => {
 class Question extends Component {
     state = {
         displayAnswers: false,
-        answers: []
+        answers: [],
+        rating: this.props.question.question_rating
     }
 
     componentDidMount() {
 
     }
 
+    rateThisQuestion = (score) => {
+        this.setState({rating: score});
+    }
+
+    
     toggleDisplayAns = async () => {
         if (!this.state.displayAnswers) {
             let response = await fetch('/post-answers', {
@@ -71,12 +107,13 @@ class Question extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    question: this.props.question.question_text
+                    question: this.props.question.question_text,
+                    id: this.props.question.id
                 })
             });
             let data = await response.json();
             console.log(data);
-            this.setState({answers: data.answers_es});
+            this.setState({answers: data.answers});
         }
         this.setState({displayAnswers: !this.state.displayAnswers});
     }
@@ -88,7 +125,12 @@ class Question extends Component {
     }
 
     saveAnswerModifs = (id, a) => {
-        this.state.answers[id].answer = a;
+        this.state.answers[id].answer_text = a;
+        
+    }
+
+    saveAnswerLv = (id, l) => {
+        this.state.answers[id].answer_level = l;
     }
 
     saveToDb = async () => {
@@ -98,9 +140,9 @@ class Question extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id: this.props.question.id,
-                question: this.props.question.question_text,
-                answers: {answers: this.state.answers}
+                question: this.props.question,
+                answers: this.state.answers,
+                rating: this.state.rating
             })
         });
         let data = await response.json();
@@ -120,10 +162,24 @@ class Question extends Component {
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}><EditRoundedIcon/></Button>
             </div>
             {this.state.displayAnswers? <div className='as'>
+                <div className='q-review'>
+                    <div className='rate'>
+                        <span className='vote-icon'><StarHalfRoundedIcon/></span>
+                        <span>
+                        {[1, 2, 3, 4, 5].map(i => {
+                            if (i <= this.state.rating) 
+                                return <FiberManualRecordRoundedIcon key={i} onClick={_ => this.rateThisQuestion(i)}/>
+                            return <FiberManualRecordOutlinedIcon key={i} onClick={_ => this.rateThisQuestion(i)} />
+                        })}
+                        </span>
+                        <span className='vote-urge'>Vote this question!</span>
+                    </div>
+                </div>
                 {this.state.answers.map((a, id) => <Answer 
                     answer={a} 
                     key={id} 
                     save={this.saveAnswerModifs} 
+                    modifyLv={this.saveAnswerLv}
                     aid={id}
                     del={_ => this.deleteAnswer(id)}
                 />)}
@@ -151,6 +207,7 @@ export default class App extends Component {
             })
         });
         let data = await response.json();
+        console.log(data);
         this.setState({questions: data.questions});
     }
 
@@ -177,7 +234,11 @@ export default class App extends Component {
          */
         return <div className='qa-select'>
             <div className='qas'>
-                {this.state.questions.map((q, _) => <Question key={q.id} question={q} />)}
+                {this.state.questions.map((q, _) => <Question 
+                    key={q.id} 
+                    question={q} 
+                    rateQuestion={this.rateQuestion}
+                />)}
             </div>
         </div>
     }

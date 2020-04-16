@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 const prodConfig = require('./webpack.prod.js');
 const devConfig = require('./webpack.dev.js');
 const options = {};
-var PORT = 5000;
+var PORT = 5500;
 
 var mode = 'prod';
 if (process.argv.length < 3) mode = 'prod';
@@ -57,6 +57,7 @@ client.connect();
 /** 
 * websocket communication handlers
 */
+var count = 0;
 io.on('connection', function(socket){
     count ++;
     console.log(`${count}th user connected with id: ${socket.id}`);
@@ -82,6 +83,7 @@ app.get('*', (req, res, next) => {
 });
 
 app.post('/post-questions', (req, res, next) => {
+    
     const text = 'select * from question limit $1 offset $2';
     const ranges = [20, 20 * req.body.range];
 
@@ -95,41 +97,47 @@ app.post('/post-questions', (req, res, next) => {
 })
 
 app.post('/post-answers', async (req, res) => {
-    let response = await fetch('http://15.236.84.229:8000/answer/', {
-        method: 'post',
-        body: JSON.stringify(req.body),
-        headers: {'Content-Type': 'application/json'}
-    })
-        .then(response => response.json())
-	    .then(json => {
-            console.log(json);
-            res.json(json);
-        });
-})
-
-app.post('/submit-answers', (req, res) => {
-    const text = 'insert into questionAnswers_demo (id, question, answers) values ($1, $2, $3) on conflict (id) do update set answers=excluded.answers;';
-    const values = [req.body.id, req.body.question, JSON.stringify(req.body.answers)];
-    client.query(text, values, (err, response) => {
+    const query = 'select * from question_answer_temp as qa, answer_temp as a'
+        + ' where qa.answer_temp_id = a.id and qa.question_id = $1';
+    const values = [req.body.id]
+    client.query(query, values, (err, response) => {
         if (err) {
             res.json({err: err.stack});
         } else {
-            res.json({status: 'ok'});
+            res.json({answers: response.rows});
         }
     })
 })
 
+app.post('/submit-answers', (req, res) => {
+    let err = false;
+    let errmsg = ''
+    req.body.answers.forEach(a => {
+        console.log(a.answer_level);
+        const text = 'update answer_temp set answer_teacher_manual_review=TRUE, answer_text=$1, answer_level=$2 where id=$3';
+        const values = [a.answer_text, a.answer_level, a.answer_temp_id];
+        client.query(text, values, (error, response) => {
+            if (error) {
+                err = true;
+                errmsg = err.stack;
+            }
+        })
+    })
+    const query = 'update question set question_teacher_manual_review=TRUE, question_rating=$2 where id=$1';
+    const values = [req.body.question.id, req.body.rating]
+    client.query(query, values, (error, response) => {
+        if (error) {
+            err = true;
+            errmsg = err.stack;
+        }
+    })
+    if (err) res.json({err: errmsg});
+    else res.json({status: 'ok'});
+})
+
 // on terminating the process
 process.on('SIGINT', _ => {
-    console.log('now you quit!');
-
-    for (const id in posts) {
-        let name = posts[id].fn;
-        delete posts[id].fn;
-        delete posts[id].article;
-        fs.writeFileSync(path.join(postsPath, 'postinfo', name + '.json'), JSON.stringify(posts[id], undefined, 4));
-        console.log(path.join(postsPath, 'postinfo', name + '.json'));
-    }
+    console.log('exit.');
     process.exit();
     client.end();
     pool.end();

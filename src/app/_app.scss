@@ -70,6 +70,38 @@
             position: relative;
             box-sizing: border-box;
             padding: 0.5em;
+            .q-review {
+                position: relative;
+                box-sizing: border-box;
+                padding: 0.2em 0.5em;
+                border-bottom: 1px solid rgb(224, 224, 224);
+                span {
+                    display: inline-block;
+                    margin: 0.3em;
+                    box-sizing: border-box;
+                    padding: 0.2em;
+                }
+                .vote-icon {
+                    svg {
+                        font-size: 1.5em;
+                        color: #607d8b;
+                    }
+                }
+                svg {
+                    vertical-align: middle;
+                    font-size: 1em;
+                    color: #00c853;
+                }
+                .vote-urge {
+                    border-radius: 1em;
+                    border: 1px solid lightgrey;
+                    background: whitesmoke;
+                    font-size: 0.8em;
+                    padding: 0.2em 1em;
+                    font-weight: 600;
+
+                }
+            }
             .answer {
                 position: relative;
                 box-sizing: border-box;
@@ -79,6 +111,24 @@
                 &:hover {
                     border-left: 2px solid #2962ff;
                 }
+                .Supp {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: start;
+                    margin: 0.5em 0;
+                    .levels {
+                        .lv-choice {
+                            background-color: #cfd8dc;
+                            border-radius: 1em;
+                            margin: 0 0.2em;
+                        }
+                        svg {
+                            font-size: 1em;
+                            color: grey;
+                            vertical-align: middle;
+                        }
+                    }
+                }
                 span {
                     display: inline-block;
                     box-sizing: border-box;
@@ -86,12 +136,20 @@
                     font-size: 0.9em;
                 }
                 .title {
-                    font-weight: 600;
+                    svg {
+                        vertical-align: middle;
+                        font-size: 1.2em;
+                        color: #607d8b;
+                    }
                 }
                 .lv {
                     border-radius: 0.5em;
                     background: white;
                     box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+                    text-overflow: ellipsis;
+                    overflow: hidden; 
+                    max-width: 10em;
+                    white-space: nowrap;
                 }
                 .del {
                     position: absolute;
@@ -112,6 +170,10 @@
                 }
                 .Ans {
                     margin: 0.5em 0;
+                    .ttle {
+                        font-weight: 600;
+                        text-decoration: underline;
+                    }
                     div, textarea {
                         resize: unset;
                         display: block;
@@ -123,11 +185,12 @@
                         padding: 0.5em;
                         width: 100%;
                         outline: none;
-                        border: none;
+                        border: 1px solid transparent;
                         border-radius: 0.5em;
+                        background: #f0f2f5;
                     }
                     textarea {
-                        background: #f0f2f5;
+                        border: 1px solid #607d8b;
                     }
                 }
             }
