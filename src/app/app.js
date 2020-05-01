@@ -75,6 +75,7 @@ const Answer = (props) => {
                     className='ans' 
                     onDoubleClick={toggleEditAns}
                 >
+                    <span className='aid'>double click to modify!</span>
                     {props.answer.answer_text}
                 </div>
             }
@@ -98,7 +99,6 @@ class Question extends Component {
         this.setState({rating: score});
     }
 
-    
     toggleDisplayAns = async () => {
         if (!this.state.displayAnswers) {
             let response = await fetch('/post-answers', {
@@ -126,7 +126,6 @@ class Question extends Component {
 
     saveAnswerModifs = (id, a) => {
         this.state.answers[id].answer_text = a;
-        
     }
 
     saveAnswerLv = (id, l) => {
@@ -158,7 +157,7 @@ class Question extends Component {
         return <div className={'question' + (this.state.displayAnswers? ' show-answers': '')}>
             <div className='q'>
                 <span className='help'><HelpTwoToneIcon/></span>
-                <span>{this.props.question.question_text}</span>
+                <span>{this.props.question.question_text} <i>({this.props.question.nbanswers} answer(s))</i></span>
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}><EditRoundedIcon/></Button>
             </div>
             {this.state.displayAnswers? <div className='as'>
@@ -228,6 +227,25 @@ export default class App extends Component {
         });
     }
 
+    previousQuestions = async () => {
+        if (this.state.range > 0) {
+            let response = await fetch('/post-questions', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    range: this.state.range + 1
+                })
+            });
+            let data = await response.json();
+            this.setState({
+                range: this.state.range+1,
+                questions: data.questions
+            });
+        }
+    }
+
     render() {
         /**
          * Rendering function
@@ -239,6 +257,11 @@ export default class App extends Component {
                     question={q} 
                     rateQuestion={this.rateQuestion}
                 />)}
+            </div>
+            <div className='controller'>
+                <Button onClick={this.previousQuestions}>&#60;</Button>
+                {this.state.range}
+                <Button onClick={this.nextQuestions}>&#62;</Button>
             </div>
         </div>
     }

@@ -83,8 +83,13 @@ app.get('*', (req, res, next) => {
 });
 
 app.post('/post-questions', (req, res, next) => {
-    
-    const text = 'select * from question limit $1 offset $2';
+    const text = `
+        select question.*, count(question_answer_temp.*) as nbAnswers
+        from question 
+        full outer join question_answer_temp on question.id = question_answer_temp.question_id
+        group by question.id
+        order by id limit $1 offset $2; 
+    `;
     const ranges = [20, 20 * req.body.range];
 
     client.query(text, ranges, (err, response) => {
@@ -137,8 +142,8 @@ app.post('/submit-answers', (req, res) => {
 
 // on terminating the process
 process.on('SIGINT', _ => {
-    console.log('exit.');
-    process.exit();
     client.end();
     pool.end();
+    console.log('exit.');
+    process.exit();
 })

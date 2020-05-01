@@ -15,12 +15,19 @@
         padding: 0.5em 1em;
         &.show-answers {
             .q {
-                border-bottom: 1px solid rgb(221, 221, 221);
+                &:after {
+                    position: absolute;
+                    content: '';
+                    bottom: -0.5em;
+                    left: 0;
+                    height: 1px;
+                    width: 100%;
+                    background:rgb(221, 221, 221)
+                }
             }
         }
         .q {
             position: relative;
-            
             display: flex;
             flex-direction: row;
             justify-content: start;
@@ -29,6 +36,7 @@
                 overflow-wrap: break-word;
                 box-sizing: border-box;
                 padding: 0.2em 0.5em;
+                font-size: 0.8em;
                 &.status {
                     font-weight: 600;
                     font-size: 0.7em;
@@ -43,7 +51,7 @@
                     margin: auto;
                     font-size: 1em;
                     vertical-align: middle;
-                    color: #2e7d32;
+                    color: lightgrey;
                 }
             }
             .modify-answers {
@@ -62,19 +70,22 @@
                     font-size: 1em;
                     display: block;
                     margin: auto;
-                    color: #90a4ae;
+                    color: rgb(160, 160, 160);
                 }
             }
         }
         .as {
             position: relative;
             box-sizing: border-box;
-            padding: 0.5em;
+            padding: 0;
+            margin-top: 0.5em;
+            overflow-y: scroll;
+            max-height: 600px;
             .q-review {
                 position: relative;
                 box-sizing: border-box;
                 padding: 0.2em 0.5em;
-                border-bottom: 1px solid rgb(224, 224, 224);
+                border-bottom: 1px solid rgb(231, 231, 231);
                 span {
                     display: inline-block;
                     margin: 0.3em;
@@ -84,7 +95,7 @@
                 .vote-icon {
                     svg {
                         font-size: 1.5em;
-                        color: #607d8b;
+                        color: rgb(160, 160, 160);
                     }
                 }
                 svg {
@@ -99,7 +110,6 @@
                     font-size: 0.8em;
                     padding: 0.2em 1em;
                     font-weight: 600;
-
                 }
             }
             .answer {
@@ -107,15 +117,28 @@
                 box-sizing: border-box;
                 padding: 0.5em;
                 transition: 0.25s all cubic-bezier(0, 0, 0.2, 1);
-                border-left: 2px solid transparent;
+                &:after {
+                    content: '';
+                    position: absolute;
+                    height: 100%;
+                    top: 0;
+                    left: -1em;
+                    width: 2px;
+                    background: transparent;
+                    border-radius: 1px;
+                    transition: all 0.25s cubic-bezier(0, 0, 0.2, 1);
+                }
                 &:hover {
-                    border-left: 2px solid #2962ff;
+                    &:after {
+                        background: #2962ff;
+                    }
                 }
                 .Supp {
                     display: flex;
                     flex-direction: row;
                     justify-content: start;
                     margin: 0.5em 0;
+                    font-size: 0.9em;
                     .levels {
                         .lv-choice {
                             background-color: #cfd8dc;
@@ -139,7 +162,7 @@
                     svg {
                         vertical-align: middle;
                         font-size: 1.2em;
-                        color: #607d8b;
+                        color: grey;
                     }
                 }
                 .lv {
@@ -175,6 +198,7 @@
                         text-decoration: underline;
                     }
                     div, textarea {
+                        position: relative;
                         resize: unset;
                         display: block;
                         box-sizing: border-box;
@@ -188,9 +212,26 @@
                         border: 1px solid transparent;
                         border-radius: 0.5em;
                         background: #f0f2f5;
+                        &:hover {
+                            .aid {
+                                visibility: visible;
+                            }
+                        }
+                        .aid {
+                            position: absolute;
+                            left: 50%;
+                            top: -3em;
+                            width: 200px;
+                            margin-left: -100px;
+                            border: 1px solid lightgrey;
+                            display: block;
+                            visibility: hidden;
+                            padding: 0.2em 0.5em;
+                            text-align: center;
+                        }
                     }
                     textarea {
-                        border: 1px solid #607d8b;
+                        border: 1px solid grey;
                     }
                 }
             }
