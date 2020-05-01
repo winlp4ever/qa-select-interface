@@ -31,7 +31,7 @@ if (process.argv[2] != 'prod' & process.argv[2] != 'dev') {
 mode = process.argv[2];
 if (mode == 'prod') {
     compiler = webpack(prodConfig);
-    PORT = 80;
+    PORT = 5000;
 }
 else compiler = webpack(devConfig);
 
