@@ -143,6 +143,25 @@
                     justify-content: start;
                     margin: 0.5em 0;
                     font-size: 0.9em;
+                    position: relative;
+                    .aid {
+                        position: absolute;
+                        left: 14em;
+                        bottom: 0;
+                        width: 200px;
+                        margin-left: -100px;
+                        border: 1px solid lightgrey;
+                        display: block;
+                        visibility: hidden;
+                        padding: 0.2em 0.5em;
+                        text-align: center;
+                        background: white;
+                    }
+                    &:hover {
+                        .aid {
+                            visibility: visible;
+                        }
+                    }
                     .levels {
                         .lv-choice {
                             background-color: #cfd8dc;
@@ -169,14 +188,20 @@
                         color: grey;
                     }
                 }
-                .lv {
+                .lv, .src {
                     border-radius: 0.5em;
                     background: white;
                     box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-                    text-overflow: ellipsis;
-                    overflow: hidden; 
                     max-width: 10em;
                     white-space: nowrap;
+                    position: relative;
+                    overflow: visible;
+                    &.src {
+                        text-overflow: ellipsis;
+                        overflow: hidden;
+                        white-space: nowrap;
+                    }
+                    
                 }
                 .del {
                     position: absolute;

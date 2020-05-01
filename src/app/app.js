@@ -53,11 +53,13 @@ const Answer = (props) => {
         </Button>
         <div className='Supp Lv'>
             <span className='title'><BarChartRoundedIcon/></span>
+            <span className='aid'>click to modify</span>
             {editLv?<div className='levels'>
                 {Levels.map((l, id) => <span key={id} className='lv-choice'onClick={_ => chooseLevel(l)}>{l}</span>)}
                 <span onClick={toggleEditLv}><ClearRoundedIcon/></span>
             </div> 
-            :<span className='lv' onClick={toggleEditLv}>{props.answer.answer_level}</span>}
+            :<span className='lv' onClick={toggleEditLv}>{props.answer.answer_level}</span>
+            }
         </div>
         <div className='Supp Orientation'>
             <span className='title'><GamesRoundedIcon/></span>
@@ -65,7 +67,7 @@ const Answer = (props) => {
         </div>
         {props.answer.source? <div className='Supp Origin'>
             <span className='title'><TripOriginRoundedIcon/></span>
-            <span className='lv'>{props.answer.source}</span>
+            <span className='src'>{props.answer.source}</span>
         </div>: null}
         <div className='Ans'>
             <span className='ttle'>Answer:</span>
@@ -182,7 +184,7 @@ class Question extends Component {
                     <span className='vote-urge'>Please vote this question!</span>
                 </div>
             </div>
-            {this.state.displayAnswers? <div className='as'>
+            {this.state.displayAnswers & this.props.question.nbanswers > 0? <div className='as'>
                 <div className='asc'>
                     {this.state.answers.map((a, id) => <Answer 
                         answer={a} 
