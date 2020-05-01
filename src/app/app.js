@@ -26,6 +26,7 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 
 
 const Levels = ['Master1', 'Licence3', 'Master2'];
+const Keywords = ['javascript', 'js', 'html', 'css', 'php']
 
 const Answer = (props) => {
     const [editAns, setEditAns] = useState(false);
@@ -155,35 +156,43 @@ class Question extends Component {
         /**
          * Rendering function
          */
-        let reviewed = this.props.question.question_teacher_manual_review;
+        let qtext = this.props.question.question_normalized;
+        for (const k of Keywords) {
+            qtext = qtext.replace(k, `<b>${k}</b>`)
+        }
         return <div className={'question' + (this.state.displayAnswers? ' show-answers': '')}>
             <div className='q'>
                 <span className='help'><HelpTwoToneIcon/></span>
-                <span>{this.props.question.question_text} <i>({this.props.question.nbanswers} answer(s))</i></span>
+                <span>
+                    <a dangerouslySetInnerHTML={{__html: qtext}}></a>
+                    <i>{'  ' + this.props.question.nbanswers + (this.props.question.nbanswers > 1? ' answers': ' answer')}</i>
+                </span>
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}><EditRoundedIcon/></Button>
             </div>
-            {this.state.displayAnswers? <div className='as'>
-                <div className='q-review'>
-                    <div className='rate'>
-                        <span className='vote-icon'><StarHalfRoundedIcon/></span>
-                        <span>
-                        {[1, 2, 3, 4, 5].map(i => {
-                            if (i <= this.state.rating) 
-                                return <FiberManualRecordRoundedIcon key={i} onClick={_ => this.rateThisQuestion(i)}/>
-                            return <FiberManualRecordOutlinedIcon key={i} onClick={_ => this.rateThisQuestion(i)} />
-                        })}
-                        </span>
-                        <span className='vote-urge'>Vote this question!</span>
-                    </div>
+            <div className={'q-review' + (this.state.displayAnswers? ' show-answers': '')}>
+                <div className='rate'>
+                    <span className='vote-icon'><StarHalfRoundedIcon/></span>
+                    <span>
+                    {[1, 2, 3, 4, 5].map(i => {
+                        if (i <= this.state.rating) 
+                            return <FiberManualRecordRoundedIcon key={i} onClick={_ => this.rateThisQuestion(i)}/>
+                        return <FiberManualRecordOutlinedIcon key={i} onClick={_ => this.rateThisQuestion(i)} />
+                    })}
+                    </span>
+                    <span className='vote-urge'>Please vote this question!</span>
                 </div>
-                {this.state.answers.map((a, id) => <Answer 
-                    answer={a} 
-                    key={id} 
-                    save={this.saveAnswerModifs} 
-                    modifyLv={this.saveAnswerLv}
-                    aid={id}
-                    del={_ => this.deleteAnswer(id)}
-                />)}
+            </div>
+            {this.state.displayAnswers? <div className='as'>
+                <div className='asc'>
+                    {this.state.answers.map((a, id) => <Answer 
+                        answer={a} 
+                        key={id} 
+                        save={this.saveAnswerModifs} 
+                        modifyLv={this.saveAnswerLv}
+                        aid={id}
+                        del={_ => this.deleteAnswer(id)}
+                    />)}
+                </div>
                 <Button className='valid-modifs' onClick={this.saveToDb}>Save changes</Button>
             </div>: null}
         </div>

@@ -13,19 +13,6 @@
         overflow: hidden;
         background: #fafafa;
         padding: 0.5em 1em;
-        &.show-answers {
-            .q {
-                &:after {
-                    position: absolute;
-                    content: '';
-                    bottom: -0.5em;
-                    left: 0;
-                    height: 1px;
-                    width: 100%;
-                    background:rgb(221, 221, 221)
-                }
-            }
-        }
         .q {
             position: relative;
             display: flex;
@@ -37,6 +24,18 @@
                 box-sizing: border-box;
                 padding: 0.2em 0.5em;
                 font-size: 0.8em;
+                font-weight: 700;
+                color: #424242;
+                a {
+                    color: #424242;
+                }
+                b {
+                    color: #2962ff;
+                }
+                i {
+                    font-weight: 400;
+                    color: grey;
+                }
                 &.status {
                     font-weight: 600;
                     font-size: 0.7em;
@@ -74,44 +73,49 @@
                 }
             }
         }
+        .q-review {
+            position: relative;
+            box-sizing: border-box;
+            padding: 0.2em 0em;
+            &.show-answers {
+                border-bottom: 1px solid rgb(231, 231, 231);
+            }
+            span {
+                display: inline-block;
+                margin: 0.3em;
+                box-sizing: border-box;
+                padding: 0.2em;
+                font-size: 0.7em;
+            }
+            .vote-icon {
+                svg {
+                    font-size: 1.5em;
+                    color: rgb(160, 160, 160);
+                }
+            }
+            svg {
+                vertical-align: middle;
+                font-size: 1em;
+                color: #00c853;
+            }
+            .vote-urge {
+                border-radius: 1em;
+                background: whitesmoke;
+                font-size: 0.7em;
+                padding: 0.2em 1em;
+                font-weight: 600;
+            }
+        }
         .as {
             position: relative;
             box-sizing: border-box;
             padding: 0;
             margin-top: 0.5em;
-            overflow-y: scroll;
-            max-height: 600px;
-            .q-review {
-                position: relative;
-                box-sizing: border-box;
-                padding: 0.2em 0.5em;
-                border-bottom: 1px solid rgb(231, 231, 231);
-                span {
-                    display: inline-block;
-                    margin: 0.3em;
-                    box-sizing: border-box;
-                    padding: 0.2em;
-                }
-                .vote-icon {
-                    svg {
-                        font-size: 1.5em;
-                        color: rgb(160, 160, 160);
-                    }
-                }
-                svg {
-                    vertical-align: middle;
-                    font-size: 1em;
-                    color: #00c853;
-                }
-                .vote-urge {
-                    border-radius: 1em;
-                    border: 1px solid lightgrey;
-                    background: whitesmoke;
-                    font-size: 0.8em;
-                    padding: 0.2em 1em;
-                    font-weight: 600;
-                }
+            .asc {
+                max-height: 600px;
+                overflow-y: scroll;
             }
+            
             .answer {
                 position: relative;
                 box-sizing: border-box;
@@ -228,6 +232,7 @@
                             visibility: hidden;
                             padding: 0.2em 0.5em;
                             text-align: center;
+                            background: white;
                         }
                     }
                     textarea {
@@ -236,6 +241,10 @@
                 }
             }
             .valid-modifs {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
                 text-transform: none;
                 letter-spacing: unset;
                 font: {
@@ -244,10 +253,11 @@
                 display: block;
                 max-width: 200px;
                 margin: auto;
-                background: #2962ff;
-                color: whitesmoke;
+                color: #424242;
                 font-weight: 600;
                 border-radius: 0.5em;
+                background: white;
+                box-shadow: 0 3.2px 7.2px 0 rgba(0,0,0,.132), 0 0.6px 1.8px 0 rgba(0,0,0,.108);
             }
         }
     }

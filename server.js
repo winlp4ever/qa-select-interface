@@ -83,7 +83,7 @@ app.get('*', (req, res, next) => {
 });
 
 app.post('/post-nbquestions', (req, res) => {
-    const text = `select count(*) from question;`
+    const text = `select count(*) from question where question_valid = 1;`
     client.query(text, [], (err, response) => {
         if (err) {
             console.log(err.stack);
@@ -99,6 +99,7 @@ app.post('/post-questions', (req, res) => {
         select question.*, count(question_answer_temp.*) as nbAnswers
         from question 
         full outer join question_answer_temp on question.id = question_answer_temp.question_id
+        where question.question_valid = 1
         group by question.id
         order by id limit $1 offset $2; 
     `;
