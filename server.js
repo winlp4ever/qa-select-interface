@@ -115,6 +115,20 @@ app.post('/post-questions', (req, res) => {
     })
 })
 
+app.post('/submit-question-rating', (req, res) => {
+    const query = `
+        update question set question_rating=$1 where id=$2;
+    `;
+    values = [req.body.rating, req.body.questionid];
+    client.query(query, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json({status: 'ok'});
+        }
+    })
+})
+
 app.post('/post-answers', async (req, res) => {
     const query = 'select * from question_answer_temp as qa, answer_temp as a'
         + ' where qa.answer_temp_id = a.id and qa.question_id = $1';

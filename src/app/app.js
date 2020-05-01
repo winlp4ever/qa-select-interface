@@ -28,6 +28,18 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 const Levels = ['Master1', 'Licence3', 'Master2'];
 const Keywords = ['javascript', 'js', 'html', 'css', 'php']
 
+async function postForData(endpoint, dict={}) {
+    let response = await fetch(endpoint, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dict)
+    });
+    let data = await response.json();
+    return data;
+}
+
 const Answer = (props) => {
     const [editAns, setEditAns] = useState(false);
     const [editLv, setEditLv] = useState(false);
@@ -100,8 +112,13 @@ class Question extends Component {
 
     }
 
-    rateThisQuestion = (score) => {
-        this.setState({rating: score});
+    rateThisQuestion = async (score) => {
+        let data = await postForData('/submit-question-rating', {
+            questionid: this.props.question.id,
+            rating: score
+        })
+        if (data.status = 'ok')
+            this.setState({rating: score});
     }
 
     toggleDisplayAns = async () => {
@@ -199,19 +216,6 @@ class Question extends Component {
             </div>: null}
         </div>
     }
-}
-
-async function postForData(endpoint, dict={}) {
-    let response = await fetch(endpoint, {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dict)
-    });
-    let data = await response.json();
-    console.log(data);
-    return data;
 }
 
 export default class App extends Component {
