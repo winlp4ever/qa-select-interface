@@ -80,7 +80,6 @@ const Answer = (props) => {
                 </div>
             }
         </div>
-        
     </div>
 }
 
@@ -188,26 +187,32 @@ class Question extends Component {
     }
 }
 
+async function postForData(endpoint, dict={}) {
+    let response = await fetch(endpoint, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dict)
+    });
+    let data = await response.json();
+    console.log(data);
+    return data;
+}
+
 export default class App extends Component {
     state = {
+        nbquestions: 0,
         questions: [],
         // questions range in the db: i = questions fr index 10*i -> 10*(i+1) exclusive
         range: 0
     }
 
     async componentDidMount() {
-        let response = await fetch('/post-questions', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                range: this.state.range
-            })
+        this.setState({
+            questions: (await postForData('/post-questions', {range: this.state.range})).questions,
+            nbquestions: (await postForData('/post-nbquestions')).nbquestions
         });
-        let data = await response.json();
-        console.log(data);
-        this.setState({questions: data.questions});
     }
 
     nextQuestions = async () => {
@@ -260,7 +265,7 @@ export default class App extends Component {
             </div>
             <div className='controller'>
                 <Button onClick={this.previousQuestions}>&#60;</Button>
-                {this.state.range}
+                {this.state.range}/{Math.ceil(this.state.nbquestions / 20)}
                 <Button onClick={this.nextQuestions}>&#62;</Button>
             </div>
         </div>

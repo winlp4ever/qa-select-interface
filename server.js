@@ -82,7 +82,19 @@ app.get('*', (req, res, next) => {
     });
 });
 
-app.post('/post-questions', (req, res, next) => {
+app.post('/post-nbquestions', (req, res) => {
+    const text = `select count(*) from question;`
+    client.query(text, [], (err, response) => {
+        if (err) {
+            console.log(err.stack);
+            res.json({err: err.stack});
+        } else {
+            res.json({nbquestions: response.rows[0].count});
+        }
+    })
+})
+
+app.post('/post-questions', (req, res) => {
     const text = `
         select question.*, count(question_answer_temp.*) as nbAnswers
         from question 
@@ -91,10 +103,11 @@ app.post('/post-questions', (req, res, next) => {
         order by id limit $1 offset $2; 
     `;
     const ranges = [20, 20 * req.body.range];
-
+    
     client.query(text, ranges, (err, response) => {
         if (err) {
             console.log(err.stack);
+            res.json({err: err.stack});
         } else {
             res.json({questions: response.rows});
         }
