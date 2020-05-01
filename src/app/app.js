@@ -21,6 +21,9 @@ import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRo
 import FiberManualRecordOutlinedIcon from '@material-ui/icons/FiberManualRecordOutlined';
 import StarHalfRoundedIcon from '@material-ui/icons/StarHalfRounded';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
+import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
+import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+
 
 const Levels = ['Master1', 'Licence3', 'Master2'];
 
@@ -227,7 +230,7 @@ export default class App extends Component {
         });
         let data = await response.json();
         this.setState({
-            range: this.state.range+1,
+            range: this.state.range + 1,
             questions: data.questions
         });
     }
@@ -240,12 +243,12 @@ export default class App extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    range: this.state.range + 1
+                    range: this.state.range - 1
                 })
             });
             let data = await response.json();
             this.setState({
-                range: this.state.range+1,
+                range: this.state.range - 1,
                 questions: data.questions
             });
         }
@@ -264,9 +267,9 @@ export default class App extends Component {
                 />)}
             </div>
             <div className='controller'>
-                <Button onClick={this.previousQuestions}>&#60;</Button>
-                {this.state.range}/{Math.ceil(this.state.nbquestions / 20)}
-                <Button onClick={this.nextQuestions}>&#62;</Button>
+                <Button onClick={this.previousQuestions}><ArrowBackIosRoundedIcon/></Button>
+                <span>{this.state.range}/{Math.ceil(this.state.nbquestions / 20)}</span>
+                <Button onClick={this.nextQuestions}><ArrowForwardIosRoundedIcon/></Button>
             </div>
         </div>
     }
