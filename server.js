@@ -83,7 +83,7 @@ app.get('*', (req, res, next) => {
 });
 
 app.post('/post-nbquestions', (req, res) => {
-    const text = `select count(*) from question where question_valid = 1;`
+    const text = `select count(*) from distinct_question where question_valid = 1;`
     client.query(text, [], (err, response) => {
         if (err) {
             console.log(err.stack);
@@ -96,12 +96,13 @@ app.post('/post-nbquestions', (req, res) => {
 
 app.post('/post-questions', (req, res) => {
     const text = `
-        select question.*, count(question_answer_temp.*) as nbAnswers
-        from question 
-        full outer join question_answer_temp on question.id = question_answer_temp.question_id
+        select question.*, count(question_answer_temp.*) as nbAnswers, distinct_question.id 
+        from question
+        inner join question_answer_temp on question.id = question_answer_temp.question_id
+        inner join distinct_question on distinct_question.id = question.id
         where question.question_valid = 1
-        group by question.id
-        order by id limit $1 offset $2; 
+        group by question.id, distinct_question.id
+        order by question.id limit $1 offset $2; 
     `;
     const ranges = [20, 20 * req.body.range];
     
