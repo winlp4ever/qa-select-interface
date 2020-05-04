@@ -159,7 +159,7 @@ class Question extends Component {
             <div className='q'>
                 <span className='help'><HelpTwoToneIcon/></span>
                 <span>
-                    <i>{this.props.question.id + '. '}</i>
+                    
                     <a dangerouslySetInnerHTML={{__html: qtext}}></a>
                     <i>{'  ' + this.props.question.nbanswers + (this.props.question.nbanswers > 1? ' answers': ' answer')}</i>
                 </span>
