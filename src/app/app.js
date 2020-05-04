@@ -26,7 +26,8 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 
 
 const Levels = ['Master1', 'Licence3', 'Master2'];
-const Keywords = ['javascript', 'js', 'html', 'css', 'php']
+const Keywords = ['javascript', 'js', 'html', 'css', 'php'];
+const Topics = ['html', 'css', 'javascript', 'php'];
 
 async function postForData(endpoint, dict={}) {
     let response = await fetch(endpoint, {
@@ -87,14 +88,14 @@ const Answer = (props) => {
                 editAns? <TextareaAutosize
                     className='ans'
                     onChange={handleChangeAns}
-                    defaultValue={props.answer.answer_text}
+                    defaultValue={props.answer.answer_paragraph}
                     onBlur={toggleEditAns}
                 />: <div 
                     className='ans' 
                     onDoubleClick={toggleEditAns}
                 >
                     <span className='aid'>double click to modify!</span>
-                    {props.answer.answer_text}
+                    {props.answer.answer_paragraph}
                 </div>
             }
         </div>
@@ -223,7 +224,8 @@ export default class App extends Component {
         nbquestions: 0,
         questions: [],
         // questions range in the db: i = questions fr index 10*i -> 10*(i+1) exclusive
-        range: 0
+        range: 0,
+        topic: -1
     }
 
     async componentDidMount() {
@@ -231,6 +233,10 @@ export default class App extends Component {
             questions: (await postForData('/post-questions', {range: this.state.range})).questions,
             nbquestions: (await postForData('/post-nbquestions')).nbquestions
         });
+    }
+
+    selectTopic = (i) => {
+        this.setState({topic: i})
     }
 
     nextQuestions = async () => {
