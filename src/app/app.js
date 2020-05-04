@@ -21,6 +21,8 @@ import StarHalfRoundedIcon from '@material-ui/icons/StarHalfRounded';
 import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import CancelIcon from '@material-ui/icons/Cancel';
+
 
 import {postForData} from '../utils';
 
@@ -157,6 +159,7 @@ class Question extends Component {
             <div className='q'>
                 <span className='help'><HelpTwoToneIcon/></span>
                 <span>
+                    <i>{this.props.question.id + '. '}</i>
                     <a dangerouslySetInnerHTML={{__html: qtext}}></a>
                     <i>{'  ' + this.props.question.nbanswers + (this.props.question.nbanswers > 1? ' answers': ' answer')}</i>
                 </span>
@@ -192,6 +195,27 @@ class Question extends Component {
     }
 }
 
+const Tps = (props) => {
+    return <div className='topics'>
+        {Topics.map((t, ix) => 
+        <Button 
+            key={ix} 
+            className={'topic' + (ix == props.currTopic? ' isCurr': '') } 
+            onClick={_ => props.chooseTopic(ix)}
+        >
+            {t}
+        </Button>)}
+
+        <Button 
+            className='unset-topic' 
+            endIcon={<CancelIcon/>}
+            onClick={_ => props.chooseTopic(-1)}
+        >
+            unset topic
+        </Button>
+    </div>
+}
+
 export default class App extends Component {
     state = {
         nbquestions: 0,
@@ -203,13 +227,29 @@ export default class App extends Component {
 
     async componentDidMount() {
         this.setState({
-            questions: (await postForData('/post-questions', {range: this.state.range})).questions,
-            nbquestions: (await postForData('/post-nbquestions')).nbquestions
+            questions: (await postForData('/post-questions', {
+                range: this.state.range,
+                topic: this.state.topic
+            })).questions,
+            nbquestions: (await postForData('/post-nbquestions', {
+                topic: this.state.topic
+            })).nbquestions
         });
     }
 
-    selectTopic = (i) => {
-        this.setState({topic: i})
+    selectTopic = async (i) => {
+        this.setState({
+            topic: i,
+            questions: (await postForData('/post-questions', {
+                range: this.state.range,
+                topic: i,
+                topics: Topics
+            })).questions,
+            nbquestions: (await postForData('/post-nbquestions', {
+                topic: i,
+                topics: Topics
+            })).nbquestions
+        })
     }
 
     nextQuestions = async () => {
@@ -239,6 +279,7 @@ export default class App extends Component {
          * Rendering function
          */
         return <div className='qa-select'>
+            <Tps chooseTopic={this.selectTopic} currTopic={this.state.topic}/>
             <div className='qas'>
                 {this.state.questions.map((q, _) => <Question 
                     key={q.id} 

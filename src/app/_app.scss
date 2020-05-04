@@ -4,6 +4,37 @@
     margin: auto auto 3em auto;
     box-sizing: border-box;
     padding: 0.5em;
+    .topics {
+        text-align: center;
+        button {
+            box-sizing: border-box;
+            text-align: center;
+            padding: 0.25em 0.75em;
+            border-radius: 2em;
+            background: white;
+            display: inline-block;
+            text-transform: none;
+            letter-spacing: unset;
+            font-size: 0.7em;
+            margin: auto 0.2em;
+            border: 1px solid inherit;
+            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+            transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
+            svg {
+                vertical-align: middle;
+                font-size: 1.2em;
+            }
+            &.isCurr {
+                color: whitesmoke;
+                background: #f57f17;
+                box-shadow: none;
+            }
+        }
+        button.unset-topic {
+            border-radius: 0.1em;
+            border: 1px solid lightgrey;
+        }
+    }
     .question {
         position: relative;
         box-sizing: border-box;
