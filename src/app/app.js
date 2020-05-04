@@ -4,8 +4,6 @@ import React, { Component, useState } from 'react';
 // import style file
 import './_app.scss';
 
-// import other cpns
-
 // import 3rd party libs
 import $ from 'jquery';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
@@ -24,22 +22,11 @@ import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 
+import {postForData} from '../utils';
 
 const Levels = ['Master1', 'Licence3', 'Master2'];
 const Keywords = ['javascript', 'js', 'html', 'css', 'php'];
 const Topics = ['html', 'css', 'javascript', 'php'];
-
-async function postForData(endpoint, dict={}) {
-    let response = await fetch(endpoint, {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dict)
-    });
-    let data = await response.json();
-    return data;
-}
 
 const Answer = (props) => {
     const [editAns, setEditAns] = useState(false);
@@ -124,17 +111,10 @@ class Question extends Component {
 
     toggleDisplayAns = async () => {
         if (!this.state.displayAnswers) {
-            let response = await fetch('/post-answers', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    question: this.props.question.question_text,
-                    id: this.props.question.id
-                })
+            let data = await postForData('/post-answers', {
+                question: this.props.question.question_text,
+                id: this.props.question.id
             });
-            let data = await response.json();
             console.log(data);
             this.setState({answers: data.answers});
         }
@@ -156,18 +136,11 @@ class Question extends Component {
     }
 
     saveToDb = async () => {
-        let response = await fetch('/submit-answers', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                question: this.props.question,
-                answers: this.state.answers,
-                rating: this.state.rating
-            })
-        });
-        let data = await response.json();
+        let data = await postForData('/submit-answers', {
+            question: this.props.question,
+            answers: this.state.answers,
+            rating: this.state.rating
+        })
         console.log(data);
         //props.saveQAs();
     }
@@ -240,16 +213,9 @@ export default class App extends Component {
     }
 
     nextQuestions = async () => {
-        let response = await fetch('/post-questions', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                range: this.state.range + 1
-            })
-        });
-        let data = await response.json();
+        let data = await postForData('/post-questions', {
+            range: this.state.range + 1
+        })
         this.setState({
             range: this.state.range + 1,
             questions: data.questions
@@ -258,16 +224,9 @@ export default class App extends Component {
 
     previousQuestions = async () => {
         if (this.state.range > 0) {
-            let response = await fetch('/post-questions', {
-                method: 'post',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    range: this.state.range - 1
-                })
+            let data = await postForData('/post-questions', {
+                range: this.state.range - 1
             });
-            let data = await response.json();
             this.setState({
                 range: this.state.range - 1,
                 questions: data.questions
