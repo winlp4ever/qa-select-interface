@@ -49,6 +49,7 @@
             display: flex;
             flex-direction: row;
             justify-content: start;
+            padding-right: 4em;
             span {
                 display: inline-block;
                 overflow-wrap: break-word;
@@ -86,16 +87,16 @@
             }
             .modify-answers {
                 position: absolute;
-                top: 0;
-                right: 0;
-                max-width: 100px;
+                top: -0.5em;
+                z-index: 100;
+                right: -1em;
+                max-width: 200px;
                 padding: 0em;
                 min-width: 0;
-                width:2em;
                 height:2em;
                 border-radius: 1em;
-                margin-top: -0.5em;
-                margin-right: -1em;
+                text-transform: none;
+                font-family: 'Baloo Chettan 2', sans-serif;
                 svg {
                     font-size: 1em;
                     display: block;
@@ -177,8 +178,8 @@
                     position: relative;
                     .aid {
                         position: absolute;
-                        left: 14em;
-                        bottom: 0;
+                        top: -2.5em;
+                        left: 6em;
                         width: 200px;
                         margin-left: -100px;
                         border: 1px solid lightgrey;

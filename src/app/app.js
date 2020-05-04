@@ -130,7 +130,7 @@ class Question extends Component {
     }
 
     saveAnswerModifs = (id, a) => {
-        this.state.answers[id].answer_text = a;
+        this.state.answers[id].answer_paragraph = a;
     }
 
     saveAnswerLv = (id, l) => {
@@ -163,7 +163,7 @@ class Question extends Component {
                     <a dangerouslySetInnerHTML={{__html: qtext}}></a>
                     <i>{'  ' + this.props.question.nbanswers + (this.props.question.nbanswers > 1? ' answers': ' answer')}</i>
                 </span>
-                <Button className='modify-answers' onClick={this.toggleDisplayAns}><EditRoundedIcon/></Button>
+                <Button className='modify-answers' onClick={this.toggleDisplayAns}>View Answers</Button>
             </div>
             <div className={'q-review' + (this.state.displayAnswers? ' show-answers': '')}>
                 <div className='rate'>
