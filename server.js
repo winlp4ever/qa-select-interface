@@ -190,9 +190,8 @@ app.post('/submit-answers', (req, res) => {
     let err = false;
     let errmsg = ''
     req.body.answers.forEach(a => {
-        console.log(a.answer_level);
-        const text = 'update answer_temp set answer_teacher_manual_review=TRUE, answer_text=$1, answer_level=$2 where id=$3';
-        const values = [a.answer_text, a.answer_level, a.answer_temp_id];
+        const text = 'update answer_temp set answer_teacher_manual_review=TRUE, answer_paragraph=$1, answer_level=$2 where id=$3';
+        const values = [a.answer_paragraph, a.answer_level, a.answer_temp_id];
         client.query(text, values, (error, response) => {
             if (error) {
                 err = true;
