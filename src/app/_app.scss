@@ -137,12 +137,23 @@
                 padding: 0.2em 1em;
                 font-weight: 600;
             }
+            .rev {
+                background: whitesmoke;
+                svg {
+                    color: rgb(160, 160, 160);
+                }
+                &.reviewed {
+                    svg {
+                        color: #00c853;
+                    }
+                }
+            }   
         }
         .as {
             position: relative;
             box-sizing: border-box;
             padding: 0;
-            margin-top: 0.5em;
+            margin-top: 2em;
             .asc {
                 max-height: 600px;
                 overflow-y: scroll;
@@ -153,6 +164,7 @@
                 box-sizing: border-box;
                 padding: 0.5em;
                 transition: 0.25s all cubic-bezier(0, 0, 0.2, 1);
+                border-bottom: dashed 1px lightgrey;
                 &:after {
                     content: '';
                     position: absolute;
@@ -169,13 +181,20 @@
                         background: #2962ff;
                     }
                 }
+                .supp-container {
+                    display: flex; 
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                }
                 .Supp {
                     display: flex;
                     flex-direction: row;
                     justify-content: start;
-                    margin: 0.5em 0;
+                    margin: 0.5em 1em 0.5em 0;
                     font-size: 0.9em;
                     position: relative;
+                    
                     .aid {
                         position: absolute;
                         top: -2.5em;
@@ -207,6 +226,24 @@
                         }
                     }
                 }
+                .Delete {
+                    font-family: 'Baloo Chettan 2', sans-serif;
+                    min-width: 0;
+                    padding: 0;
+                    text-transform: none;
+                    font-weight: 700;
+                    letter-spacing: 0;
+                    background: whitesmoke;
+                    border: 1px solid lightgrey;
+                    svg {
+                        vertical-align: middle;
+                        color: grey;
+                    }
+                    span {
+                        padding: 0em 0.2em 0 0.4em;
+                        margin-right: 0;
+                    }
+                }
                 span {
                     display: inline-block;
                     box-sizing: border-box;
@@ -236,6 +273,7 @@
                     
                 }
                 .del {
+                    z-index: 10;
                     position: absolute;
                     top: 0;
                     right: 0.5em;
@@ -263,6 +301,7 @@
                         resize: unset;
                         display: block;
                         box-sizing: border-box;
+                        white-space: pre-wrap;
                         font: {
                             family: 'Baloo Chettan 2', sans-serif;
                             size: 0.8em;
@@ -292,11 +331,14 @@
                             background: white;
                         }
                     }
+                    textarea {
+                        border: 1px solid lightgrey;
+                    }
                 }
             }
             .valid-modifs {
                 position: absolute;
-                top: 0;
+                top: -1.7em;
                 left: 50%;
                 transform: translateX(-50%);
                 text-transform: none;

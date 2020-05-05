@@ -83,11 +83,11 @@ app.get('*', (req, res, next) => {
 });
 
 app.post('/post-nbquestions', (req, res) => {
-    let text = `select count(*) from distinct_question where question_valid = 1;`
+    let text = `select count(*) from distinct_question where question_valid = '1';`
     let values = []
     if (req.body.topic > -1) {
         text = `
-        select count(*) from distinct_question where question_valid = 1
+        select count(*) from distinct_question where question_valid = '1'
         and question_normalized like $1;
         ;
         `;
@@ -165,7 +165,7 @@ app.post('/post-nbanswers', (req, res) => {
         if (err) {
             res.json({err: err.stack});
         } else {
-            res.json(response.rows[0])
+            res.json(response.rows.length > 0? response.rows[0]: {nbanswer: 0});
         }
     })
 })

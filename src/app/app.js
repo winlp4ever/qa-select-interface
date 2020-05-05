@@ -22,7 +22,8 @@ import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
 import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import CancelIcon from '@material-ui/icons/Cancel';
-
+import FilterHdrIcon from '@material-ui/icons/FilterHdr';
+import RateReviewIcon from '@material-ui/icons/RateReview';
 
 import {postForData} from '../utils';
 
@@ -47,34 +48,34 @@ const Answer = (props) => {
     }
 
     return <div className='answer'>
-        <Button 
-            className='del' 
-            onClick={props.del}
-        >
-            <HighlightOffRoundedIcon/>
-        </Button>
-        <div className='Supp Lv'>
-            <span className='title'><BarChartRoundedIcon/></span>
-            <span className='aid'>click to modify</span>
-            {editLv?<div className='levels'>
-                {Levels.map((l, id) => <span key={id} className='lv-choice'onClick={_ => chooseLevel(l)}>{l}</span>)}
-                <span onClick={toggleEditLv}><ClearRoundedIcon/></span>
-            </div> 
-            :<span className='lv' onClick={toggleEditLv}>{props.answer.answer_level}</span>
-            }
+        <div className='supp-container'>
+            <div className='Supp Lv'>
+                <span className='title'><BarChartRoundedIcon/> <b>Level</b></span>
+                <span className='aid'>click to modify</span>
+                {editLv?<div className='levels'>
+                    {Levels.map((l, id) => <span key={id} className='lv-choice'onClick={_ => chooseLevel(l)}>{l}</span>)}
+                    <span onClick={toggleEditLv}><ClearRoundedIcon/></span>
+                </div> 
+                :<span className='lv' onClick={toggleEditLv}>{props.answer.answer_level}</span>
+                }
+            </div>
+            <div className='Supp Orientation'>
+                <span className='title'><GamesRoundedIcon/> <b>Orientation</b></span>
+                <span className='lv'>{props.answer.answer_orientation}</span>
+            </div>
+            {props.answer.source? <div className='Supp Origin'>
+                <span className='title'><TripOriginRoundedIcon/> <b>Orientation</b></span>
+                <span className='src'><a href={props.answer.source}>{props.answer.source}</a></span>
+            </div>: null}
+            <div className='Supp Ranking'>
+                <span className='title'><FilterHdrIcon/> <b>Ranking</b></span>
+                <span className='lv'>{props.answer.answer_rank}</span>
+            </div>
+            <Button className='Supp Delete' onClick={props.del} startIcon={<HighlightOffRoundedIcon/>}>
+                Delete this Answer
+            </Button>
         </div>
-        <div className='Supp Orientation'>
-            <span className='title'><GamesRoundedIcon/></span>
-            <span className='lv'>{props.answer.answer_orientation}</span>
-        </div>
-        {props.answer.source? <div className='Supp Origin'>
-            <span className='title'><TripOriginRoundedIcon/></span>
-            <span className='src'>{props.answer.source}</span>
-        </div>: null}
-        <div className='Supp Ranking'>
-            <span className='title'><GamesRoundedIcon/></span>
-            <span className='lv'>{props.answer.answer_rank}</span>
-        </div>
+        
         <div className='Ans'>
             <span className='ttle'>Answer:</span>
             {editAns? <TextareaAutosize
@@ -96,14 +97,13 @@ class Question extends Component {
         displayAnswers: false,
         answers: [],
         rating: this.props.question.question_rating,
-        deletedAnswers: []
+        deletedAnswers: [],
     }
 
     async componentDidMount() {
         let data = await postForData('/post-nbanswers', {
             questionid: this.props.question.id
         })
-        console.log(data);
         this.setState({nbanswers: data.nbanswers})
     }
 
@@ -122,8 +122,9 @@ class Question extends Component {
                 question: this.props.question.question_text,
                 id: this.props.question.id
             });
-            console.log(data);
             this.setState({answers: data.answers});
+            console.log(this.props.question.id);
+            console.log(data.answers);
         }
         this.setState({displayAnswers: !this.state.displayAnswers});
     }
@@ -151,8 +152,6 @@ class Question extends Component {
             rating: this.state.rating,
             deletedAnswers: this.state.deletedAnswers
         })
-        console.log(this.state.deletedAnswers);
-        console.log(data);
         this.setState({nbanswers: this.state.nbanswers-this.state.deletedAnswers.length});
     }
 
@@ -172,7 +171,9 @@ class Question extends Component {
                     <a dangerouslySetInnerHTML={{__html: qtext}}></a>
                     <i>{'  ' + this.state.nbanswers + (this.state.nbanswers > 1? ' answers': ' answer')}</i>
                 </span>
-                <Button className='modify-answers' onClick={this.toggleDisplayAns}>View Answers</Button>
+                <Button className='modify-answers' onClick={this.toggleDisplayAns}>
+                    {this.state.displayAnswers? 'Hide Answers': 'View Answers'}
+                </Button>
             </div>
             <div className={'q-review' + (this.state.displayAnswers? ' show-answers': '')}>
                 <div className='rate'>
@@ -185,9 +186,12 @@ class Question extends Component {
                     })}
                     </span>
                     <span className='vote-urge'>Please vote this question!</span>
+                    <span className={'rev' + (this.props.question.question_teacher_manual_review? ' reviewed': '')}>
+                        <RateReviewIcon/> {this.props.question.question_teacher_manual_review? ' is reviewed': ' not reviewed'}
+                    </span>
                 </div>
             </div>
-            {this.state.displayAnswers & this.props.question.nbanswers > 0? <div className='as'>
+            {this.state.displayAnswers & this.state.nbanswers > 0? <div className='as'>
                 <div className='asc'>
                     {this.state.answers.map((a, id) => <Answer 
                         answer={a} 
