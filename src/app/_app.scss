@@ -4,6 +4,25 @@
     margin: auto auto 3em auto;
     box-sizing: border-box;
     padding: 0.5em;
+    .reviewed-or-not {
+        button {
+            display: block;
+            max-width: 250px;
+            text-transform: unset;
+            letter-spacing: 0;
+            font-family: 'Baloo Chettan 2', sans-serif;
+            background: white;
+            border: 1px solid lightgrey;
+            font-size: 0.8em;
+            margin: auto;
+            &.not-reviewed {
+                background: #2962ff;
+                border-color: transparent;
+                color: whitesmoke;
+            }
+        }
+        margin: 0.5em 1em; 
+    }
     .topics {
         text-align: center;
         button {
