@@ -85,12 +85,24 @@ app.get('*', (req, res, next) => {
 app.post('/post-nbquestions', (req, res) => {
     let text = `select count(*) from distinct_question where question_valid = '1';`
     let values = []
+    if (req.body.showOnlyNotReviewed) {
+        text = `
+        select count(*) from distinct_question where question_valid = '1'
+        and question_teacher_manual_review=false;
+        `
+    }
     if (req.body.topic > -1) {
         text = `
         select count(*) from distinct_question where question_valid = '1'
         and question_normalized like $1;
-        ;
         `;
+        if (req.body.showOnlyNotReviewed) {
+            text = `
+            select count(*) from distinct_question where question_valid = '1' 
+            and question_teacher_manual_review=false
+            and question_normalized like $1;
+            `;
+        }
         values = [`%${req.body.topics[req.body.topic]}%`]
     }
     client.query(text, values, (err, response) => {
@@ -108,6 +120,13 @@ app.post('/post-questions', (req, res) => {
         select * from distinct_question
         order by id limit $1 offset $2; 
     `;
+    if (req.body.showOnlyNotReviewed) {
+        text = `
+        select * from distinct_question
+        where question_teacher_manual_review=false
+        order by id limit $1 offset $2;
+        `
+    }
     let ranges = [20, 20 * req.body.range];
     if (req.body.topic > -1) {
         text = `
@@ -117,6 +136,15 @@ app.post('/post-questions', (req, res) => {
             and question_normalized like $3
             order by id limit $1 offset $2; 
         `;
+        if (req.body.showOnlyNotReviewed) {
+            text = `
+            select * from distinct_question
+            where question_valid = 1
+            and question_normalized like $3
+            and question_teacher_manual_review=false
+            order by id limit $1 offset $2;
+           `
+        }
         let u = req.body.topic > -1? req.body.topics[req.body.topic]: '';
         ranges = [20, 20 * req.body.range, `%${u}%`];
     }

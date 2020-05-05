@@ -234,38 +234,70 @@ const Tps = (props) => {
 }
 
 export default class App extends Component {
+    _mounted = false;
     state = {
         nbquestions: 0,
         questions: [],
         // questions range in the db: i = questions fr index 10*i -> 10*(i+1) exclusive
         range: 0,
-        topic: -1
+        topic: -1,
+        showOnlyNotReviewed: false
     }
 
     async componentDidMount() {
+        this._mounted = true;
         this.setState({
             questions: (await postForData('/post-questions', {
                 range: this.state.range,
-                topic: this.state.topic
+                topic: this.state.topic,
+                showOnlyNotReviewed: this.state.showOnlyNotReviewed
             })).questions,
             nbquestions: (await postForData('/post-nbquestions', {
-                topic: this.state.topic
+                topic: this.state.topic,
+                showOnlyNotReviewed: this.state.showOnlyNotReviewed
             })).nbquestions
         });
     }
 
+    componentWillUnmount() {
+        this._mounted = false;
+    }
+
+    _setState = (dct) => {
+        if (this._mounted) this.setState(dct);
+    }
+
+    toggleShowNotReviewed = async () => {
+        this._setState({
+            questions: (await postForData('/post-questions', {
+                range: this.state.range,
+                topic: this.state.topic,
+                showOnlyNotReviewed: !this.state.showOnlyNotReviewed,
+                topics: Topics
+            })).questions,
+            nbquestions: (await postForData('/post-nbquestions', {
+                topic: this.state.topic,
+                showOnlyNotReviewed: !this.state.showOnlyNotReviewed,
+                topics: Topics
+            })).nbquestions,
+            showOnlyNotReviewed: !this.state.showOnlyNotReviewed
+        });
+    }
+
     selectTopic = async (i) => {
-        this.setState({
+        this._setState({
             topic: i,
             questions: (await postForData('/post-questions', {
                 range: this.state.range,
                 topic: i,
+                showOnlyNotReviewed: this.state.showOnlyNotReviewed,
                 topics: Topics
             })).questions,
             nbquestions: (await postForData('/post-nbquestions', {
                 topic: i,
+                showOnlyNotReviewed: this.state.showOnlyNotReviewed,
                 topics: Topics
-            })).nbquestions
+            })).nbquestions,
         })
     }
 
@@ -273,7 +305,7 @@ export default class App extends Component {
         let data = await postForData('/post-questions', {
             range: this.state.range + 1
         })
-        this.setState({
+        this._setState({
             range: this.state.range + 1,
             questions: data.questions
         });
@@ -284,7 +316,7 @@ export default class App extends Component {
             let data = await postForData('/post-questions', {
                 range: this.state.range - 1
             });
-            this.setState({
+            this._setState({
                 range: this.state.range - 1,
                 questions: data.questions
             });
@@ -296,6 +328,14 @@ export default class App extends Component {
          * Rendering function
          */
         return <div className='qa-select'>
+            <div className='reviewed-or-not'>
+                <Button 
+                    className={this.state.showOnlyNotReviewed? 'not-reviewed': 'all'}
+                    onClick={this.toggleShowNotReviewed}
+                >
+                    {this.state.showOnlyNotReviewed? 'Show All': 'Show Not Reviewed Questions'}
+                </Button>
+            </div>
             <Tps chooseTopic={this.selectTopic} currTopic={this.state.topic}/>
             <div className='qas'>
                 {this.state.questions.map((q, _) => <Question 
