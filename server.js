@@ -156,9 +156,8 @@ app.post('/submit-question-rating', (req, res) => {
 app.post('/post-answers', async (req, res) => {
     const query = `
     select * from question_answer_temp as qa, answer_temp as a
-    where qa.answer_temp_id = a.id and qa.question_id = $1
-    order by a.answer_rank asc, a.answer_level
-    ;
+    where qa.answer_temp_id = a.id and qa.question_id = $1 and a.answer_valid='1'
+    order by a.answer_rank asc, a.answer_level;
     `
     const values = [req.body.id]
     client.query(query, values, (err, response) => {
@@ -178,6 +177,16 @@ app.post('/submit-answers', (req, res) => {
         const text = 'update answer_temp set answer_teacher_manual_review=TRUE, answer_text=$1, answer_level=$2 where id=$3';
         const values = [a.answer_text, a.answer_level, a.answer_temp_id];
         client.query(text, values, (error, response) => {
+            if (error) {
+                err = true;
+                errmsg = err.stack;
+            }
+        })
+    })
+    req.body.deletedAnswers.forEach(d => {
+        let query = `update answer_temp set answer_valid='0', answer_teacher_manual_review=TRUE where id=$1;`
+        let values = [d];
+        client.query(query, values, (error, response) => {
             if (error) {
                 err = true;
                 errmsg = err.stack;

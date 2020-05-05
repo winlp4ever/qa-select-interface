@@ -71,22 +71,21 @@ const Answer = (props) => {
             <span className='title'><TripOriginRoundedIcon/></span>
             <span className='src'>{props.answer.source}</span>
         </div>: null}
+        <div className='Supp Ranking'>
+            <span className='title'><GamesRoundedIcon/></span>
+            <span className='lv'>{props.answer.answer_rank}</span>
+        </div>
         <div className='Ans'>
             <span className='ttle'>Answer:</span>
-            {
-                editAns? <TextareaAutosize
-                    className='ans'
-                    onChange={handleChangeAns}
-                    defaultValue={props.answer.answer_paragraph}
-                    onBlur={toggleEditAns}
-                />: <div 
-                    className='ans' 
-                    onDoubleClick={toggleEditAns}
-                >
-                    <span className='aid'>double click to modify!</span>
-                    {props.answer.answer_paragraph}
-                </div>
-            }
+            {editAns? <TextareaAutosize
+                className='ans'
+                onChange={handleChangeAns}
+                defaultValue={props.answer.answer_paragraph}
+                onBlur={toggleEditAns}
+            />: <div onDoubleClick={toggleEditAns}>
+                <span className='aid'>double click to modify!</span>
+                {props.answer.answer_paragraph}
+            </div>}
         </div>
     </div>
 }
@@ -95,7 +94,8 @@ class Question extends Component {
     state = {
         displayAnswers: false,
         answers: [],
-        rating: this.props.question.question_rating
+        rating: this.props.question.question_rating,
+        deletedAnswers: []
     }
 
     componentDidMount() {
@@ -126,7 +126,9 @@ class Question extends Component {
     deleteAnswer = (id) => {
         let as = this.state.answers.slice();
         as.splice(id, 1);
-        this.setState({answers: as});
+        let ds = this.state.deletedAnswers.slice();
+        ds.push(this.state.answers[id].answer_temp_id);
+        this.setState({answers: as, deletedAnswers: ds});
     }
 
     saveAnswerModifs = (id, a) => {
@@ -141,8 +143,10 @@ class Question extends Component {
         let data = await postForData('/submit-answers', {
             question: this.props.question,
             answers: this.state.answers,
-            rating: this.state.rating
+            rating: this.state.rating,
+            deletedAnswers: this.state.deletedAnswers
         })
+        console.log(this.state.deletedAnswers);
         console.log(data);
         //props.saveQAs();
     }
