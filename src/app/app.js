@@ -348,7 +348,7 @@ export default class App extends Component {
             </div>
             <div className='controller'>
                 <Button onClick={this.previousQuestions}><ArrowBackIosRoundedIcon/></Button>
-                <span>{this.state.range}/{Math.ceil(this.state.nbquestions / 20)+1}</span>
+                <span>{this.state.range+1}/{Math.ceil(this.state.nbquestions / 20)}</span>
                 <Button onClick={this.nextQuestions}><ArrowForwardIosRoundedIcon/></Button>
             </div>
         </div>
