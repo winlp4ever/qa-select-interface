@@ -302,13 +302,15 @@ export default class App extends Component {
     }
 
     nextQuestions = async () => {
-        let data = await postForData('/post-questions', {
-            range: this.state.range + 1
-        })
-        this._setState({
-            range: this.state.range + 1,
-            questions: data.questions
-        });
+        if (this.state.range < this.state.nbquestions-1) {
+            let data = await postForData('/post-questions', {
+                range: this.state.range + 1
+            })
+            this._setState({
+                range: this.state.range + 1,
+                questions: data.questions
+            });
+        }
     }
 
     previousQuestions = async () => {
@@ -346,7 +348,7 @@ export default class App extends Component {
             </div>
             <div className='controller'>
                 <Button onClick={this.previousQuestions}><ArrowBackIosRoundedIcon/></Button>
-                <span>{this.state.range}/{Math.ceil(this.state.nbquestions / 20)}</span>
+                <span>{this.state.range}/{Math.ceil(this.state.nbquestions / 20)+1}</span>
                 <Button onClick={this.nextQuestions}><ArrowForwardIosRoundedIcon/></Button>
             </div>
         </div>
