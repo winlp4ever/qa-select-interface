@@ -93,12 +93,13 @@ const Answer = (props) => {
 
 class Question extends Component {
     state = {
-        nbanswers: 0,
+        nbanswers: -1,
         displayAnswers: false,
         answers: [],
         rating: this.props.question.question_rating,
         deletedAnswers: [],
-        reviewed: this.props.question.question_teacher_manual_review
+        reviewed: this.props.question.question_teacher_manual_review,
+        answersReviewed: false
     }
 
     async componentDidMount() {
@@ -114,7 +115,7 @@ class Question extends Component {
             rating: score
         })
         if (data.status = 'ok')
-            this.setState({rating: score, reviewed: true});
+            this.setState({rating: score});
     }
 
     toggleDisplayAns = async () => {
@@ -133,13 +134,13 @@ class Question extends Component {
         as.splice(id, 1);
         let ds = this.state.deletedAnswers.slice();
         ds.push(this.state.answers[id].answer_temp_id);
-        this.setState({answers: as, deletedAnswers: ds});
+        this.setState({answers: as, deletedAnswers: ds, answersReviewed: true});
     }
 
     saveAnswerModifs = (id, a) => {
         let as = this.state.answers.slice();
         as[id].answer_paragraph = a;
-        this.setState({answers: as});
+        this.setState({answers: as, answersReviewed: true});
     }
 
     saveAnswerLv = (id, l) => {
@@ -147,13 +148,15 @@ class Question extends Component {
     }
 
     saveToDb = async () => {
-        let data = await postForData('/submit-answers', {
-            question: this.props.question,
-            answers: this.state.answers,
-            rating: this.state.rating,
-            deletedAnswers: this.state.deletedAnswers
-        })
-        this.setState({nbanswers: this.state.nbanswers-this.state.deletedAnswers.length, reviewed: true});
+        if (this.state.answersReviewed) {
+            let data = await postForData('/submit-answers', {
+                question: this.props.question,
+                answers: this.state.answers,
+                rating: this.state.rating,
+                deletedAnswers: this.state.deletedAnswers
+            })
+            this.setState({nbanswers: this.state.nbanswers-this.state.deletedAnswers.length, reviewed: true});
+        }
     }
 
     render() {
@@ -170,7 +173,7 @@ class Question extends Component {
                 <span>
                     
                     <a dangerouslySetInnerHTML={{__html: qtext}}></a>
-                    <i>{'  ' + this.state.nbanswers + (this.state.nbanswers > 1? ' answers': ' answer')}</i>
+                    {this.state.nbanswers > -1 ? <i>{'  ' + this.state.nbanswers + (this.state.nbanswers > 1? ' answers': ' answer')}</i>:null}
                 </span>
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}>
                     {this.state.displayAnswers? 'Hide Answers': 'View Answers'}
@@ -188,7 +191,7 @@ class Question extends Component {
                     </span>
                     <span className='vote-urge'>Please vote this question!</span>
                     <span className={'rev' + (this.state.reviewed? ' reviewed': '')}>
-                        <RateReviewIcon/> {this.state.reviewed? ' is reviewed': ' not reviewed'}
+                        <RateReviewIcon/> {this.state.reviewed? ' answers reviewed': 'answers not reviewed'}
                     </span>
                 </div>
             </div>

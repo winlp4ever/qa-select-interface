@@ -105,13 +105,8 @@ app.post('/post-nbquestions', (req, res) => {
 
 app.post('/post-questions', (req, res) => {
     let text = `
-        select question.*, count(question_answer_temp.*) as nbAnswers, distinct_question.id 
-        from question
-        inner join question_answer_temp on question.id = question_answer_temp.question_id
-        inner join distinct_question on distinct_question.id = question.id
-        where question.question_valid = 1
-        group by question.id, distinct_question.id
-        order by question.id limit $1 offset $2; 
+        select * from distinct_question
+        order by id limit $1 offset $2; 
     `;
     let ranges = [20, 20 * req.body.range];
     if (req.body.topic > -1) {
@@ -165,7 +160,7 @@ app.post('/post-nbanswers', (req, res) => {
         if (err) {
             res.json({err: err.stack});
         } else {
-            res.json(response.rows.length > 0? response.rows[0]: {nbanswer: 0});
+            res.json(response.rows.length > 0? response.rows[0]: {nbanswers: 0});
         }
     })
 })
