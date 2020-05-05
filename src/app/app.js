@@ -92,14 +92,19 @@ const Answer = (props) => {
 
 class Question extends Component {
     state = {
+        nbanswers: 0,
         displayAnswers: false,
         answers: [],
         rating: this.props.question.question_rating,
         deletedAnswers: []
     }
 
-    componentDidMount() {
-
+    async componentDidMount() {
+        let data = await postForData('/post-nbanswers', {
+            questionid: this.props.question.id
+        })
+        console.log(data);
+        this.setState({nbanswers: data.nbanswers})
     }
 
     rateThisQuestion = async (score) => {
@@ -148,7 +153,7 @@ class Question extends Component {
         })
         console.log(this.state.deletedAnswers);
         console.log(data);
-        //props.saveQAs();
+        this.setState({nbanswers: this.state.nbanswers-this.state.deletedAnswers.length});
     }
 
     render() {
@@ -165,7 +170,7 @@ class Question extends Component {
                 <span>
                     
                     <a dangerouslySetInnerHTML={{__html: qtext}}></a>
-                    <i>{'  ' + this.props.question.nbanswers + (this.props.question.nbanswers > 1? ' answers': ' answer')}</i>
+                    <i>{'  ' + this.state.nbanswers + (this.state.nbanswers > 1? ' answers': ' answer')}</i>
                 </span>
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}>View Answers</Button>
             </div>

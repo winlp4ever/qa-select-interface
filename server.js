@@ -116,14 +116,11 @@ app.post('/post-questions', (req, res) => {
     let ranges = [20, 20 * req.body.range];
     if (req.body.topic > -1) {
         text = `
-            select question.*, count(question_answer_temp.*) as nbAnswers, distinct_question.id 
-            from question
-            inner join question_answer_temp on question.id = question_answer_temp.question_id
-            inner join distinct_question on distinct_question.id = question.id
-            where question.question_valid = 1
-            and question.question_normalized like $3
-            group by question.id, distinct_question.id
-            order by question.id limit $1 offset $2; 
+            select * 
+            from distinct_question
+            where question_valid = 1
+            and question_normalized like $3
+            order by id limit $1 offset $2; 
         `;
         let u = req.body.topic > -1? req.body.topics[req.body.topic]: '';
         ranges = [20, 20 * req.body.range, `%${u}%`];
@@ -149,6 +146,26 @@ app.post('/submit-question-rating', (req, res) => {
             res.json({err: err.stack});
         } else {
             res.json({status: 'ok'});
+        }
+    })
+})
+
+app.post('/post-nbanswers', (req, res) => {
+    const query = `
+    select qa.question_id, count(a.id) as nbanswers
+    from 
+        question_answer_temp as qa
+    inner join 
+        answer_temp as a
+    on qa.answer_temp_id = a.id and question_id=$1 and answer_valid='1'
+    group by qa.question_id;
+    `;
+    values = [req.body.questionid]
+    client.query(query, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json(response.rows[0])
         }
     })
 })
