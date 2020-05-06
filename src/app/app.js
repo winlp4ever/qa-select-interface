@@ -27,7 +27,7 @@ import RateReviewIcon from '@material-ui/icons/RateReview';
 
 import {postForData} from '../utils';
 
-const Levels = ['Master1', 'Licence3', 'Master2'];
+const Levels = ['Master2','Master1','Licence3','Licence2','Licence1','Bac','Premiere']
 const Keywords = ['javascript', 'js', 'html', 'css', 'php'];
 const Topics = ['html', 'css', 'javascript', 'php'];
 
@@ -144,7 +144,9 @@ class Question extends Component {
     }
 
     saveAnswerLv = (id, l) => {
-        this.state.answers[id].answer_level = l;
+        let as = this.state.answers.slice();
+        as[id].answer_level = l;
+        this.setState({answers: as, answersReviewed: true});
     }
 
     saveToDb = async () => {
@@ -314,6 +316,7 @@ export default class App extends Component {
     }
 
     previousQuestions = async () => {
+        console.log(this.state.range);
         if (this.state.range > 0) {
             let data = await postForData('/post-questions', {
                 range: this.state.range - 1

@@ -202,6 +202,7 @@ app.post('/post-answers', async (req, res) => {
     const values = [req.body.id]
     client.query(query, values, (err, response) => {
         if (err) {
+            console.log(err.stack);
             res.json({err: err.stack});
         } else {
             res.json({answers: response.rows});
@@ -219,6 +220,7 @@ app.post('/submit-answers', (req, res) => {
             if (error) {
                 err = true;
                 errmsg = err.stack;
+                console.log(errmsg);
             }
         })
     })
@@ -229,6 +231,7 @@ app.post('/submit-answers', (req, res) => {
             if (error) {
                 err = true;
                 errmsg = err.stack;
+                console.log(errmsg);
             }
         })
     })
@@ -238,6 +241,7 @@ app.post('/submit-answers', (req, res) => {
         if (error) {
             err = true;
             errmsg = err.stack;
+            console.log(errmsg);
         }
     })
     if (err) res.json({err: errmsg});
