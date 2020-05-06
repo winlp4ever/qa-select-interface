@@ -306,7 +306,10 @@ export default class App extends Component {
     nextQuestions = async () => {
         if (this.state.range < this.state.nbquestions-1) {
             let data = await postForData('/post-questions', {
-                range: this.state.range + 1
+                range: this.state.range + 1,
+                topic: this.state.topic,
+                showOnlyNotReviewed: this.state.showOnlyNotReviewed,
+                topics: Topics
             })
             this._setState({
                 range: this.state.range + 1,
@@ -319,7 +322,10 @@ export default class App extends Component {
         console.log(this.state.range);
         if (this.state.range > 0) {
             let data = await postForData('/post-questions', {
-                range: this.state.range - 1
+                range: this.state.range - 1,
+                topic: this.state.topic,
+                showOnlyNotReviewed: this.state.showOnlyNotReviewed,
+                topics: Topics
             });
             this._setState({
                 range: this.state.range - 1,
