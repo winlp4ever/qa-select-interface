@@ -93,20 +93,40 @@ const Answer = (props) => {
 
 class Question extends Component {
     state = {
+        question: this.props.question.question_text,
+        questionid: this.props.question.id,
         nbanswers: -1,
         displayAnswers: false,
         answers: [],
         rating: this.props.question.question_rating,
         deletedAnswers: [],
         reviewed: this.props.question.question_teacher_manual_review,
-        answersReviewed: false
+        answersReviewed: false,
+        modifyQuestion: false
     }
 
     async componentDidMount() {
         let data = await postForData('/post-nbanswers', {
-            questionid: this.props.question.id
+            questionid: this.state.questionid
         })
         this.setState({nbanswers: data.nbanswers})
+    }
+
+    handleQuestionChanges = (e) => {
+        this.setState({question: e.target.value});
+    }
+
+    editQuestion = () => {
+        this.setState({modifyQuestion: true})
+    }
+
+    submitQuestionChanges = async () => {
+        let data = await postForData('/submit-question-changes', {
+            questionid: this.state.questionid,
+            question: this.state.question
+        })
+        console.log(data);
+        this.setState({modifyQuestion: false})
     }
 
     rateThisQuestion = async (score) => {
@@ -165,7 +185,7 @@ class Question extends Component {
         /**
          * Rendering function
          */
-        let qtext = this.props.question.question_normalized;
+        let qtext = this.state.question;
         for (const k of Keywords) {
             qtext = qtext.replace(k, `<b>${k}</b>`)
         }
@@ -173,8 +193,18 @@ class Question extends Component {
             <div className='q'>
                 <span className='help'><HelpTwoToneIcon/></span>
                 <span>
-                    
-                    <a dangerouslySetInnerHTML={{__html: qtext}}></a>
+                    {this.state.modifyQuestion?
+                        <TextareaAutosize 
+                            onChange={this.handleQuestionChanges}
+                            defaultValue={this.state.question}
+                            placeholder='retype the question'
+                            onBlur={this.submitQuestionChanges}
+                        />: 
+                        <a dangerouslySetInnerHTML={{__html: qtext}}></a>
+                    }
+                    {this.state.modifyQuestion? null:
+                        <Button className='edit-question-on' onClick={this.editQuestion}><EditRoundedIcon/></Button>
+                    }
                     {this.state.nbanswers > -1 ? <i>{'  ' + this.state.nbanswers + (this.state.nbanswers > 1? ' answers': ' answer')}</i>:null}
                 </span>
                 <Button className='modify-answers' onClick={this.toggleDisplayAns}>

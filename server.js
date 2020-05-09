@@ -173,6 +173,20 @@ app.post('/submit-question-rating', (req, res) => {
     })
 })
 
+app.post('/submit-question-changes', (req, res) => {
+    const query = `
+        update question set question_text=$1 where id=$2;
+    `;
+    values = [req.body.question, req.body.questionid];
+    client.query(query, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json({status: 'ok'});
+        }
+    })
+})
+
 app.post('/post-nbanswers', (req, res) => {
     const query = `
     select qa.question_id, count(a.id) as nbanswers
