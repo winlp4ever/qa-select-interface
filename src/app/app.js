@@ -195,12 +195,13 @@ class Question extends Component {
                 <span>
                     {this.state.modifyQuestion?
                         <TextareaAutosize 
+                            className='question-editing'
                             onChange={this.handleQuestionChanges}
                             defaultValue={this.state.question}
                             placeholder='retype the question'
                             onBlur={this.submitQuestionChanges}
                         />: 
-                        <a dangerouslySetInnerHTML={{__html: qtext}}></a>
+                        <a className='question-text' dangerouslySetInnerHTML={{__html: qtext}}></a>
                     }
                     {this.state.modifyQuestion? null:
                         <Button className='edit-question-on' onClick={this.editQuestion}><EditRoundedIcon/></Button>

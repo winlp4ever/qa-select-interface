@@ -69,6 +69,16 @@
             flex-direction: row;
             justify-content: start;
             padding-right: 4em;
+            .question-editing {
+                border: 1px solid lightgrey;
+                resize: none;
+                outline: none;
+                background: inherit;
+            }
+            .edit-question-on {
+                padding: 0;
+                min-width: 0;
+            }
             span {
                 display: inline-block;
                 overflow-wrap: break-word;
