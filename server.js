@@ -198,7 +198,7 @@ app.post('/post-answers', async (req, res) => {
     select * from question_answer_temp as qa, answer_temp as a
     where qa.answer_temp_id = a.id and qa.question_id = $1 and a.answer_valid='1'
     order by a.answer_rank asc, a.answer_level;
-    `
+    `;
     const values = [req.body.id]
     client.query(query, values, (err, response) => {
         if (err) {
