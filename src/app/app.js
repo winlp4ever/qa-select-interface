@@ -202,7 +202,7 @@ class Question extends Component {
         }
         return <div className={'question' + (this.state.displayAnswers? ' show-answers': '')}>
             <div className='q'>
-                <span className='help'><HelpTwoToneIcon/></span>
+                <span className='help'>{this.state.questionid}</span>
                 <span>
                     {this.state.modifyQuestion?
                         <TextareaAutosize 

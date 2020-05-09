@@ -69,6 +69,10 @@
             flex-direction: row;
             justify-content: start;
             padding-right: 4em;
+            .help {
+                color: grey;
+                font-weight: normal;
+            }
             .question-editing {
                 border: 1px solid lightgrey;
                 resize: none;
