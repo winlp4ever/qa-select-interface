@@ -24,6 +24,7 @@ import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import CancelIcon from '@material-ui/icons/Cancel';
 import FilterHdrIcon from '@material-ui/icons/FilterHdr';
 import RateReviewIcon from '@material-ui/icons/RateReview';
+import FlagRoundedIcon from '@material-ui/icons/FlagRounded';
 
 import {postForData} from '../utils';
 
@@ -102,7 +103,8 @@ class Question extends Component {
         deletedAnswers: [],
         reviewed: this.props.question.question_teacher_manual_review,
         answersReviewed: false,
-        modifyQuestion: false
+        modifyQuestion: false,
+        fuzzy: this.props.question.question_fuzzy
     }
 
     async componentDidMount() {
@@ -181,6 +183,15 @@ class Question extends Component {
         }
     }
 
+    isFuzzyOrNot = async () => {
+        let data = await postForData('/fuzzi-question', {
+            questionid: this.props.question.id,
+            fuzzy: this.state.fuzzy? 0: 1
+        })
+        console.log(data);
+        this.setState({fuzzy: this.state.fuzzy? 0: 1});
+    }
+
     render() {
         /**
          * Rendering function
@@ -225,6 +236,10 @@ class Question extends Component {
                     <span className='vote-urge'>Please vote this question!</span>
                     <span className={'rev' + (this.state.reviewed? ' reviewed': '')}>
                         <RateReviewIcon/> {this.state.reviewed? ' answers reviewed': 'answers not reviewed'}
+                    </span>
+                    <span className={'clarity' + (this.state.fuzzy? ' fuzzy': '')} 
+                        onClick={this.isFuzzyOrNot}>
+                        <FlagRoundedIcon/> {this.state.fuzzy? ' question fuzzy/ambigue': ' question clear'}
                     </span>
                 </div>
             </div>

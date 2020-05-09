@@ -187,6 +187,20 @@ app.post('/submit-question-changes', (req, res) => {
     })
 })
 
+app.post('/fuzzi-question', (req, res) => {
+    const query = `
+        update question set question_fuzzy=$1 where id=$2;
+    `;
+    values = [req.body.fuzzy, req.body.questionid];
+    client.query(query, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json({status: 'ok'});
+        }
+    })
+})
+
 app.post('/post-nbanswers', (req, res) => {
     const query = `
     select qa.question_id, count(a.id) as nbanswers

@@ -177,6 +177,16 @@
                     }
                 }
             }   
+            .clarity {
+                svg {
+                    color: rgb(160, 160, 160);
+                }
+                &.fuzzy {
+                    svg {
+                        color: #e57373;
+                    }
+                }
+            }
         }
         .as {
             position: relative;
