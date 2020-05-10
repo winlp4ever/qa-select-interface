@@ -268,6 +268,27 @@
                             vertical-align: middle;
                         }
                     }
+                    .src {
+                        max-width: 300px;
+                        
+                        button {
+                            
+                            padding: 0;
+                            min-width: 0;
+                            span {
+                                padding: 0 0.2em;
+                                min-width: 0;
+                            }
+                            svg {
+                                font-size: 0.7em;
+                            }
+                        }
+                    }
+                    .edit-src {
+                        resize: none;
+                        background: inherit;
+                        outline: none;
+                    }
                 }
                 .Delete {
                     font-family: 'Baloo Chettan 2', sans-serif;

@@ -39,6 +39,9 @@ const Answer = (props) => {
     const toggleEditLv = () => setEditLv(!editLv);
     const toggleEditAns = () => setEditAns(!editAns);
 
+    const [editSrc, setEditSrc] = useState(false);
+    const [src, setSrc] = useState(props.answer.source)
+
     const handleChangeAns = (e) => {
         props.save(props.aid, e.target.value);
     }
@@ -46,6 +49,24 @@ const Answer = (props) => {
     const chooseLevel = (s) => {
         props.modifyLv(props.aid, s);
         toggleEditLv();
+    }
+
+    const handleChangeSrc = (e) => {
+        setSrc(e.target.value);
+    }
+
+    const submitSrcChanges = async () => {
+        console.log(props.answer.id);
+        let data = await postForData('/submit-answer-src-changes', {
+            answerid: props.answer.id,
+            source: src
+        })
+        console.log(data);
+        setEditSrc(false);
+    }
+
+    const enableEditSrc = () => {
+        setEditSrc(true);
     }
 
     return <div className='answer'>
@@ -64,10 +85,19 @@ const Answer = (props) => {
                 <span className='title'><GamesRoundedIcon/> <b>Orientation</b></span>
                 <span className='lv'>{props.answer.answer_orientation}</span>
             </div>
-            {props.answer.source? <div className='Supp Origin'>
-                <span className='title'><TripOriginRoundedIcon/> <b>Orientation</b></span>
-                <span className='src'><a target='_blank' href={props.answer.source}>{props.answer.source}</a></span>
-            </div>: null}
+            <div className='Supp Origin'>
+                <span className='title'><TripOriginRoundedIcon/> <b>Sourse</b></span>
+                {editSrc? <TextareaAutosize 
+                    className='edit-src'
+                    defaultValue={src}
+                    onChange={handleChangeSrc}
+                    onBlur={submitSrcChanges}
+                />:
+                <span className='src'>
+                    <Button onClick={enableEditSrc}><EditRoundedIcon/></Button>
+                    <a target='_blank' href={src}>{src}</a>
+                </span>}
+            </div>
             <div className='Supp Ranking'>
                 <span className='title'><FilterHdrIcon/> <b>Ranking</b></span>
                 <span className='lv'>{props.answer.answer_rank}</span>

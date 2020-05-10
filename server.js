@@ -201,6 +201,20 @@ app.post('/fuzzi-question', (req, res) => {
     })
 })
 
+app.post('/submit-answer-src-changes', (req, res) => {
+    const query = `
+        update answer_temp set source=$1 where id=$2;
+    `;
+    values = [req.body.source, req.body.answerid];
+    client.query(query, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json({status: 'ok'});
+        }
+    })
+})
+
 app.post('/post-nbanswers', (req, res) => {
     const query = `
     select qa.question_id, count(a.id) as nbanswers
