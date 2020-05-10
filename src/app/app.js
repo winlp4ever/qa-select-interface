@@ -56,12 +56,10 @@ const Answer = (props) => {
     }
 
     const submitSrcChanges = async () => {
-        console.log(props.answer.id);
         let data = await postForData('/submit-answer-src-changes', {
             answerid: props.answer.id,
             source: src
         })
-        console.log(data);
         setEditSrc(false);
     }
 
