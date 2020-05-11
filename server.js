@@ -215,6 +215,30 @@ app.post('/submit-answer-src-changes', (req, res) => {
     })
 })
 
+app.post('/submit-new-answer', (req, res) => {
+    console.log(req.body);
+    const query = `
+    with rows as (
+        insert into answer_temp 
+        (answer_text, answer_student_id, answer_teacher_id, answer_course_part_id, answer_paragraph, answer_rank, answer_bootcamp_recording_id) 
+        values ($1, null, null, null, $1, -1, null)
+        returning id
+    )
+        
+    insert into question_answer_temp (question_id, answer_temp_id)
+    select $2 as qid, id from 
+    rows;
+    `;
+    values = [req.body.answer, req.body.questionid];
+    client.query(query, values, (err, response) => {
+        if (err) {
+            res.json({err: err.stack});
+        } else {
+            res.json({status: 'ok'});
+        }
+    })
+})
+
 app.post('/post-nbanswers', (req, res) => {
     const query = `
     select qa.question_id, count(a.id) as nbanswers

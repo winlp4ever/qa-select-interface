@@ -32,6 +32,28 @@ const Levels = ['Master2','Master1','Licence3','Licence2','Licence1','Bac','Prem
 const Keywords = ['javascript', 'js', 'html', 'css', 'php'];
 const Topics = ['html', 'css', 'javascript', 'php'];
 
+const _3WAAns = (props) => {
+    const [ans, setAns] = useState('');
+    const [editMode, setEditMode] = useState(false);
+    
+    const handleChange = (e) => setAns(e.target.value);
+
+    const submit = async () => {
+        let data = await postForData('/submit-new-answer', {
+            questionid: props.questionid,
+            answer: ans
+        })
+        console.log(data);
+    }
+
+    return <div className='3wa-answer'>
+        <TextareaAutosize 
+            onChange={handleChange}
+        />
+        <Button onClick={submit}>Submit</Button>
+    </div>
+}
+
 const Answer = (props) => {
     const [editAns, setEditAns] = useState(false);
     const [editLv, setEditLv] = useState(false);
@@ -272,6 +294,7 @@ class Question extends Component {
                 </div>
             </div>
             {this.state.displayAnswers & this.state.nbanswers > 0? <div className='as'>
+                <_3WAAns questionid={this.state.questionid}/>
                 <div className='asc'>
                     {this.state.answers.map((a, id) => <Answer 
                         answer={a} 
