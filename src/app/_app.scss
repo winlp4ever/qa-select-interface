@@ -196,12 +196,34 @@
             position: relative;
             box-sizing: border-box;
             padding: 0;
-            margin-top: 2em;
+            margin-top: 2.5em;
             .asc {
                 max-height: 600px;
                 overflow-y: scroll;
             }
-            
+            .add-new-answer {
+                box-sizing: border-box;
+                padding: 0.5em;
+                textarea {
+                    display: block;
+                    width: 100%;
+                    font-family: inherit;
+                    outline: none;
+                    resize: none;
+                    border: 1px solid lightgrey;
+                }
+                button {
+                    font-family: inherit;;
+                    text-transform: none;
+                    letter-spacing: unset;
+                    display: block;
+                    margin: auto;
+                    max-width: 100px;
+                    border: 1px solid lightgrey;
+                    padding: 0.2em 0.5em;
+                    margin-top: 0.5em;
+                }
+            }
             .answer {
                 position: relative;
                 box-sizing: border-box;
@@ -223,6 +245,9 @@
                     &:after {
                         background: #2962ff;
                     }
+                }
+                &.wa {
+                    background: #fff8e1 ;
                 }
                 .supp-container {
                     display: flex; 
@@ -402,7 +427,7 @@
             }
             .valid-modifs {
                 position: absolute;
-                top: -1.7em;
+                top: -2.5em;
                 left: 50%;
                 transform: translateX(-50%);
                 text-transform: none;

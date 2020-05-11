@@ -1,5 +1,5 @@
 // import react
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useRef } from 'react';
 
 // import style file
 import './_app.scss';
@@ -35,7 +35,7 @@ const Topics = ['html', 'css', 'javascript', 'php'];
 const _3WAAns = (props) => {
     const [ans, setAns] = useState('');
     const [editMode, setEditMode] = useState(false);
-    
+    const writeTxt = useRef(null);
     const handleChange = (e) => setAns(e.target.value);
 
     const submit = async () => {
@@ -43,12 +43,15 @@ const _3WAAns = (props) => {
             questionid: props.questionid,
             answer: ans
         })
-        console.log(data);
+        //writeTxt.current.value = '';
+        await props.reset();
     }
 
-    return <div className='3wa-answer'>
+    return <div className='add-new-answer'>
         <TextareaAutosize 
             onChange={handleChange}
+            ref={writeTxt}
+            placeholder='type your new answer'
         />
         <Button onClick={submit}>Submit</Button>
     </div>
@@ -89,7 +92,7 @@ const Answer = (props) => {
         setEditSrc(true);
     }
 
-    return <div className='answer'>
+    return <div className={'answer' + (props.answer.answer_rank==-1? ' wa': '')}>
         <div className='supp-container'>
             <div className='Supp Lv'>
                 <span className='title'><BarChartRoundedIcon/> <b>Level</b></span>
@@ -201,6 +204,11 @@ class Question extends Component {
         this.setState({displayAnswers: !this.state.displayAnswers});
     }
 
+    reset = async() => {
+        await this.toggleDisplayAns();
+        await this.toggleDisplayAns();
+    }
+
     deleteAnswer = (id) => {
         let as = this.state.answers.slice();
         as.splice(id, 1);
@@ -293,8 +301,10 @@ class Question extends Component {
                     </span>
                 </div>
             </div>
-            {this.state.displayAnswers & this.state.nbanswers > 0? <div className='as'>
-                <_3WAAns questionid={this.state.questionid}/>
+            {this.state.displayAnswers ? <div className='as'>
+                <_3WAAns questionid={this.state.questionid}
+                    reset={this.reset}
+                />
                 <div className='asc'>
                     {this.state.answers.map((a, id) => <Answer 
                         answer={a} 
