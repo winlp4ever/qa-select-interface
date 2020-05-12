@@ -199,7 +199,7 @@ class Question extends Component {
                 question: this.props.question.question_text,
                 id: this.props.question.id
             });
-            this.setState({answers: data.answers});
+            this.setState({answers: data.answers, nbanswers: data.answers.length});
         }
         this.setState({displayAnswers: !this.state.displayAnswers});
     }
@@ -214,7 +214,7 @@ class Question extends Component {
         as.splice(id, 1);
         let ds = this.state.deletedAnswers.slice();
         ds.push(this.state.answers[id].answer_temp_id);
-        this.setState({answers: as, deletedAnswers: ds, answersReviewed: true});
+        this.setState({answers: as, deletedAnswers: ds, answersReviewed: true, nbanswers: as.length});
     }
 
     saveAnswerModifs = (id, a) => {
@@ -237,7 +237,7 @@ class Question extends Component {
                 rating: this.state.rating,
                 deletedAnswers: this.state.deletedAnswers
             })
-            this.setState({nbanswers: this.state.nbanswers-this.state.deletedAnswers.length, reviewed: true});
+            this.setState({reviewed: true});
         }
     }
 
