@@ -65,7 +65,6 @@ const Answer = (props) => {
     const toggleEditAns = () => setEditAns(!editAns);
 
     const [editSrc, setEditSrc] = useState(false);
-    const [src, setSrc] = useState(props.answer.source)
 
     const handleChangeAns = (e) => {
         props.save(props.aid, e.target.value);
@@ -76,14 +75,10 @@ const Answer = (props) => {
         toggleEditLv();
     }
 
-    const handleChangeSrc = (e) => {
-        setSrc(e.target.value);
-    }
-
     const submitSrcChanges = async () => {
         let data = await postForData('/submit-answer-src-changes', {
             answerid: props.answer.id,
-            source: src
+            source: props.answer.source
         })
         setEditSrc(false);
     }
@@ -112,13 +107,13 @@ const Answer = (props) => {
                 <span className='title'><TripOriginRoundedIcon/> <b>Sourse</b></span>
                 {editSrc? <TextareaAutosize 
                     className='edit-src'
-                    defaultValue={src}
-                    onChange={handleChangeSrc}
+                    defaultValue={props.answer.source}
+                    onChange={e => props.handleSrcChange(props.aid, e)}
                     onBlur={submitSrcChanges}
                 />:
                 <span className='src'>
                     <Button onClick={enableEditSrc}><EditRoundedIcon/></Button>
-                    <a target='_blank' href={src}>{src}</a>
+                    <a target='_blank' href={props.answer.source}>{props.answer.source}</a>
                 </span>}
             </div>
             <div className='Supp Ranking'>
@@ -217,6 +212,12 @@ class Question extends Component {
         this.setState({answers: as, deletedAnswers: ds, answersReviewed: true, nbanswers: as.length});
     }
 
+    handleSrcChange = (id, e) => {
+        let as = this.state.answers.slice();
+        as[id].source = e.target.value;
+        this.setState({answers: as});
+    }
+
     saveAnswerModifs = (id, a) => {
         let as = this.state.answers.slice();
         as[id].answer_paragraph = a;
@@ -311,6 +312,7 @@ class Question extends Component {
                         key={id} 
                         save={this.saveAnswerModifs} 
                         modifyLv={this.saveAnswerLv}
+                        handleSrcChange={this.handleSrcChange}
                         aid={id}
                         del={_ => this.deleteAnswer(id)}
                     />)}

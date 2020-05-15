@@ -118,13 +118,13 @@ app.post('/post-nbquestions', (req, res) => {
 app.post('/post-questions', (req, res) => {
     let text = `
         select * from distinct_question
-        order by _size desc limit $1 offset $2; 
+        order by _size desc, distinct_question.id desc limit $1 offset $2; 
     `;
     if (req.body.showOnlyNotReviewed) {
         text = `
         select * from distinct_question
         where question_teacher_manual_review=false
-        order by _size desc limit $1 offset $2;
+        order by _size desc, distinct_question.id desc limit $1 offset $2;
         `
     }
     let ranges = [20, 20 * req.body.range];
@@ -134,7 +134,7 @@ app.post('/post-questions', (req, res) => {
             from distinct_question
             where question_valid = 1
             and question_normalized like $3
-            order by _size desc limit $1 offset $2; 
+            order by _size desc, distinct_question.id desc limit $1 offset $2; 
         `;
         if (req.body.showOnlyNotReviewed) {
             text = `
@@ -142,7 +142,7 @@ app.post('/post-questions', (req, res) => {
             where question_valid = 1
             and question_normalized like $3
             and question_teacher_manual_review=false
-            order by _size desc limit $1 offset $2;
+            order by _size desc, distinct_question.id desc limit $1 offset $2;
            `
         }
         let u = req.body.topic > -1? req.body.topics[req.body.topic]: '';
