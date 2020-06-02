@@ -1,3 +1,18 @@
+.enter-password {
+    position: relative;
+    top: 2.5em;
+    text-align: center;
+    .password-field {
+        margin: auto;
+    }
+    input {
+        display: block;
+        max-width: 400;
+        margin: auto;
+        text-align: center;
+    }
+}
+
 .qa-select {
     position: relative;
     width: 50%;

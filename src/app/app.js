@@ -25,6 +25,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import FilterHdrIcon from '@material-ui/icons/FilterHdr';
 import RateReviewIcon from '@material-ui/icons/RateReview';
 import FlagRoundedIcon from '@material-ui/icons/FlagRounded';
+import TextField from '@material-ui/core/TextField';
 
 import {postForData} from '../utils';
 
@@ -352,7 +353,8 @@ export default class App extends Component {
         // questions range in the db: i = questions fr index 10*i -> 10*(i+1) exclusive
         range: 0,
         topic: -1,
-        showOnlyNotReviewed: false
+        showOnlyNotReviewed: false,
+        pass: ''
     }
 
     async componentDidMount() {
@@ -443,10 +445,23 @@ export default class App extends Component {
         }
     }
 
+    handlePass = (e) => {
+        this.setState({pass: e.target.value})
+    }
+
     render() {
         /**
          * Rendering function
          */
+        if (this.state.pass != '2311')
+            return <div className='enter-password'>
+                <TextField 
+                    className='password-field' 
+                    variant='standard' 
+                    onChange={this.handlePass} 
+                    placeholder='Enter password'
+                />
+            </div>
         return <div className='qa-select'>
             <div className='reviewed-or-not'>
                 <Button 
